@@ -5,13 +5,13 @@
             <Toolbar class="mb-6">
                 <template #start>
                     <Button label="New" icon="pi pi-plus" class="mr-2" @click="openNew" />
-                    <Button label="Delete" icon="pi pi-trash" severity="danger" outlined @click="confirmDeleteSelected" :disabled="!selectedProducts || !selectedProducts.length" />
+                    <!-- <Button label="Delete" icon="pi pi-trash" severity="danger" outlined @click="confirmDeleteSelected" :disabled="!selectedProducts || !selectedProducts.length" /> -->
                 </template>
                 <template #center>
                     <h4 class="m-0 font-bold text-4xl">SUBJECTS</h4>
                 </template>
                 <template #end>
-                    <FileUpload mode="basic" accept="image/*" :maxFileSize="1000000" label="Import" customUpload chooseLabel="Import" class="mr-2" auto :chooseButtonProps="{ severity: 'secondary' }" />
+                    <!-- <FileUpload mode="basic" accept="image/*" :maxFileSize="1000000" label="Import" customUpload chooseLabel="Import" class="mr-2" auto :chooseButtonProps="{ severity: 'secondary' }" /> -->
                     <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
                 </template>
             </Toolbar>
@@ -40,7 +40,7 @@
                     </div>
                 </template>
 
-                <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
+                <!-- <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column> -->
                 <Column field="code" header="Subject Code" style="min-width: 12rem"></Column>
                 <Column field="name" header="Descriptive Title" style="min-width: 16rem"></Column>
                 <Column field="category" header="Units" style="min-width: 10rem"></Column>
@@ -158,7 +158,7 @@ const fromDatabase =     [
                 major: 'Financial Management',
                 email: 'christianmahinay@gmail.com',
                 password: 'password',
-                inventoryStatus:'',
+                inventoryStatus:'gwapo',
                 code:'Oh yeah',
             },
             {
@@ -167,7 +167,7 @@ const fromDatabase =     [
                 major: 'Marketing Management',
                 email: 'roland@gmail.com',
                 password: 'password',
-                inventoryStatus:'',
+                inventoryStatus:'gwapo',
                 code:'Oh yeah',
             },
             {
@@ -176,7 +176,7 @@ const fromDatabase =     [
                 major: 'Batchelor of Elementary Education',
                 email: 'roland@gmail.com',
                 password: 'password',
-                inventoryStatus:'',
+                inventoryStatus:'gwapo',
                 code:'Oh yeah',
             },
             {
@@ -185,7 +185,7 @@ const fromDatabase =     [
                 major: 'Batchelor of Secondary Education',
                 email: 'cristian@gmail.com',
                 password: 'password',
-                inventoryStatus:'',
+                inventoryStatus:'gwapo',
                 code:'Oh yeah',
             },
             {
@@ -194,7 +194,7 @@ const fromDatabase =     [
                 major: 'English',
                 email: 'samm@gmail.com',
                 password: 'password',
-                inventoryStatus:'',
+                inventoryStatus:'gwapo',
                 code:'Oh yeah',
             },
             {
@@ -203,7 +203,7 @@ const fromDatabase =     [
                 major: 'Filipino',
                 email: 'roland@gmail.com',
                 password: 'password',
-                inventoryStatus:'',
+                inventoryStatus:'gwapo',
                 code:'Oh yeah',
             },
             {
@@ -212,7 +212,7 @@ const fromDatabase =     [
                 major: 'Mathematics',
                 email: 'cristian@gmail.com',
                 password: 'password',
-                inventoryStatus:'',
+                inventoryStatus:'gwapo',
                 code:'Oh yeah',
             },
 ]

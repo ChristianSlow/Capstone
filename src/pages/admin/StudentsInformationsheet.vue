@@ -14,10 +14,10 @@ import Column from 'primevue/column';
                                             class="w- p-2 border-b-2 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600"
                                             type="text"
                                         />
-                                        <input
+                                        <input 
                                             placeholder="Date:"
                                             class="w- p-2 border-b-2 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600"
-                                            type="text"
+                                            type="date"
                                         />
                                     </div>
                                     <div class="flex justify-between">
@@ -39,18 +39,16 @@ import Column from 'primevue/column';
                                     </div>
                                     <div>
                                         <div class="flex justify-between">
-                                        <input
-                                            placeholder="Term:"
-                                            class="w- p-2 border-b-2 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600"
-                                            type="text"
-                                        />
-                                        <input
-                                            placeholder="S.Y.:"
-                                            
-                                            class="w- p-2 border-b-2 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600"
-                                            type="text"
-                                        />
-                                        <select id="underline_select" class="block py-2.5 px-0 w-[210px] text-sm border-0 border-b-2 appearance-none dark:text-gray-400 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600 peer">
+                                            <select id="underline_select" class="block py-2.5 px-0 w-[198px] text-sm border-0 border-b-2 appearance-none dark:text-gray-400 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600 peer">
+                                            <option selected>Term:</option>
+                                            <option value="first">First</option>
+                                            <option value="second">Second</option>
+                                        </select>
+                                        <select id="underline_select" class="block py-2.5 px-0 w-[200px] text-sm border-0 border-b-2 appearance-none dark:text-gray-400 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600 peer">
+                                            <option selected>S.Y:</option>
+                                            <option value="US">2024-2025</option>
+                                        </select>
+                                        <select id="underline_select" class="block py-2.5 px-0 w-[200px] text-sm border-0 border-b-2 appearance-none dark:text-gray-400 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600 peer">
                                             <option selected>Course:</option>
                                             <option value="US">BSBA FM</option>
                                             <option value="BA">BSBA MM</option>
@@ -58,7 +56,7 @@ import Column from 'primevue/column';
                                             <option value="FR">BSED MATH</option>
                                             <option value="DE">BSED ENGLISH</option> 
                                         </select>
-                                        <select id="underline_select" class="block py-2.5 px-0 w-[210px] text-sm border-0 border-b-2 appearance-none dark:text-gray-400 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600 peer">
+                                        <select id="underline_select" class="block py-2.5 px-0 w-[197px] text-sm border-0 border-b-2 appearance-none dark:text-gray-400 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600 peer">
                                             <option selected>Year Level:</option>
                                             <option value="US">First Year</option>
                                         </select>
