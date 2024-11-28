@@ -6,7 +6,7 @@ import Column from 'primevue/column';
     <main class="p-4 md:ml-64 h-auto pt-20 bg-red-800">
         <!-- <h1 class="text-center text-lg font-bold">STUDENTS INFORMATION SHEET</h1> -->
         <div class="flex flex-col bg-white">
-                            <h1 class="text-center text-2xl font-bold border-b bg-gray-200 border-gray-200 p-5"> Student's Information Sheet</h1>
+                            <h1 class="text-center text-4xl font-bold border-b bg-gray-200 border-gray-200 p-5"> Student's Information Sheet</h1>
                                 <div class="flex flex-col">
                                     <div class="flex justify-between">
                                         <input

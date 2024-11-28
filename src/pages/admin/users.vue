@@ -9,10 +9,10 @@
                         <Button label="Delete" icon="pi pi-trash" severity="danger" outlined @click="confirmDeleteSelected" :disabled="!selectedProducts || !selectedProducts.length" />
                     </template>
     
-                    <template #end>
+                    <!-- <template #end>
                         <FileUpload mode="basic" accept="image/*" :maxFileSize="1000000" label="Import" customUpload chooseLabel="Import" class="mr-2" auto :chooseButtonProps="{ severity: 'secondary' }" />
                         <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
-                    </template>
+                    </template> -->
                 </Toolbar>
     
                 <DataTable
@@ -28,8 +28,8 @@
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
                 >
                     <template #header>
-                        <div class="flex flex-wrap gap-2 items-center justify-between">
-                            <h4 class="m-0">Manage Accounts</h4>
+                        <div class="flex flex-wrap gap-2 items-cente justify-between">
+                            <h4 class="m-0 text-3xl font-bold">Manage Accounts</h4>
                             <IconField>
                                 <InputIcon>
                                     <i class="pi pi-search" />
@@ -51,7 +51,7 @@
                             {{ formatCurrency(slotProps.data.price) }}
                         </template>
                     </Column> -->
-                    <Column field="category" header="Role"  style="min-width: 10rem"></Column>
+                    <Column field="role" header="Role"  style="min-width: 10rem"></Column>
                     <!-- <Column field="rating" header="Reviews" sortable style="min-width: 12rem">
                         <template #body="slotProps">
                             <Rating :modelValue="slotProps.data.rating" :readonly="true" />
@@ -71,7 +71,7 @@
                 </DataTable>
             </div>
     
-            <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Product Details" :modal="true">
+            <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Add Accounts" :modal="true">
                 <div class="flex flex-col gap-6">
                     <img v-if="product.image" :src="`https://primefaces.org/cdn/primevue/images/product/${product.image}`" :alt="product.image" class="block m-auto pb-4" />
                     <div>
@@ -80,37 +80,47 @@
                         <small v-if="submitted && !product.name" class="text-red-500">Name is required.</small>
                     </div>
                     <div>
+                        <label for="email" class="block font-bold mb-3">Email:</label>
+                        <InputText id="email" v-model.trim="product.email" required="true" autofocus :invalid="submitted && !product.email" fluid />
+                        <small v-if="submitted && !product.email" class="text-red-500">Email is required.</small>
+                    </div>
+                    <div>
+                        <label for="password" class="block font-bold mb-3">Password:</label>
+                        <InputText id="password" v-model.trim="product.password" required="true" autofocus :invalid="submitted && !product.password" fluid />
+                        <small v-if="submitted && !product.password" class="text-red-500">Password is required.</small>
+                    </div>
+                    <!-- <div>
                         <label for="description" class="block font-bold mb-3">Description</label>
                         <Textarea id="description" v-model="product.description" required="true" rows="3" cols="20" fluid />
-                    </div>
-                    <div>
+                    </div> -->
+                    <!-- <div>
                         <label for="inventoryStatus" class="block font-bold mb-3">Inventory Status</label>
                         <Select id="inventoryStatus" v-model="product.inventoryStatus" :options="statuses" optionLabel="label" placeholder="Select a Status" fluid></Select>
-                    </div>
+                    </div> -->
     
                     <div>
-                        <span class="block font-bold mb-4">Category</span>
+                        <span class="block font-bold mb-4">Role</span>
                         <div class="grid grid-cols-12 gap-4">
                             <div class="flex items-center gap-2 col-span-6">
-                                <RadioButton id="category1" v-model="product.category" name="category" value="Accessories" />
-                                <label for="category1">Accessories</label>
+                                <RadioButton id="category1" v-model="product.role" name="category" value="Admin" />
+                                <label for="category1">Admin</label>
                             </div>
                             <div class="flex items-center gap-2 col-span-6">
-                                <RadioButton id="category2" v-model="product.category" name="category" value="Clothing" />
-                                <label for="category2">Clothing</label>
+                                <RadioButton id="category2" v-model="product.role" name="category" value="Ossa Coordinator" />
+                                <label for="category2">Ossa Coordinator</label>
                             </div>
                             <div class="flex items-center gap-2 col-span-6">
-                                <RadioButton id="category3" v-model="product.category" name="category" value="Electronics" />
-                                <label for="category3">Electronics</label>
+                                <RadioButton id="category3" v-model="product.role" name="category" value="Registrar" />
+                                <label for="category3">Registrar</label>
                             </div>
                             <div class="flex items-center gap-2 col-span-6">
-                                <RadioButton id="category4" v-model="product.category" name="category" value="Fitness" />
-                                <label for="category4">Fitness</label>
+                                <RadioButton id="category4" v-model="product.role" name="category" value="Assistant" />
+                                <label for="category4">Assistant</label>
                             </div>
                         </div>
                     </div>
     
-                    <div class="grid grid-cols-12 gap-4">
+                    <!-- <div class="grid grid-cols-12 gap-4">
                         <div class="col-span-6">
                             <label for="price" class="block font-bold mb-3">Price</label>
                             <InputNumber id="price" v-model="product.price" mode="currency" currency="USD" locale="en-US" fluid />
@@ -119,7 +129,7 @@
                             <label for="quantity" class="block font-bold mb-3">Quantity</label>
                             <InputNumber id="quantity" v-model="product.quantity" integeronly fluid />
                         </div>
-                    </div>
+                    </div> -->
                 </div>
     
                 <template #footer>
@@ -162,13 +172,51 @@ import { FilterMatchMode } from '@primevue/core/api';
 // import { useToast } from 'primevue/usetoast';
 import { ProductService } from '../../service/ProductService';
 
-onMounted(() => {
-    ProductService.getProducts().then((data) => (products.value = data));
-});
+// onMounted(() => {
+//     ProductService.getProducts().then((data) => (products.value = data));
+// });
+
+const fromDatabase =     [
+    {       
+                image:'',
+                name: 'Christian Mahinay',
+                role: 'Admin',
+                email: 'christianmahinay@gmail.com',
+                password: 'password',
+            },
+            {
+                image:'',
+                name: 'Roland Clarion',
+                role: 'Registrar',
+                email: 'roland@gmail.com',
+                password: 'password',
+            },
+            {
+                image:'',
+                name: 'Hann Samm Beleganio',
+                role: 'Ossa Coordinator',
+                email: 'samm@gmail.com',
+                password: 'password',
+            },
+            {
+                image:'',
+                name: 'Cristian Jay Benigay',
+                role: 'Assistant',
+                email: 'cristian@gmail.com',
+                password: 'password',
+            }
+]
+
+
+
+onMounted(()=> {
+    products.value = fromDatabase
+})
 
 // const toast = useToast();aa
 const dt = ref();
 const products = ref();
+
 const productDialog = ref(false);
 const deleteProductDialog = ref(false);
 const deleteProductsDialog = ref(false);

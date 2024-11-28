@@ -3,17 +3,16 @@
 import { ref } from 'vue';
 </script>
 <template>
-    <div class="flex ">
+    <div class="flex flex-col md:flex-row lg:flex-row">
         <div class="flex-1 h-screen bg-gray-200 flex flex-col items-center text-center text-6xl font-bold text-red-800">
             <img src="/courses.png" alt="tlogo">
         </div>
-        
         <div class="flex-1 flex flex-col items-center">
-            <div clas="flex-1 flex flex-col item-center p-6">
-                <img src="/tlogo.png" width="200px" height="200px" alt="tlogo">
-                <!-- <h1 class="text-3xl text-center font-bold text-red-800">Tanon College</h1> -->
+            <div clas="flex justify-center items-center p-3">
+                <img src="/tlogo.png" width="180px" height="180px" alt="tlogo">
+                <h1 class="text-3xl text-center font-bold text-red-800">Tañon College</h1>
             </div>
-            <div class="flex justify-center items6-center h-[50vh]">
+            <div class="flex justify-center flex-1 flex-col">
                 <form class="max-w-sm mx-auto w-72">
                     <div class="mb-5">
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email:</label>

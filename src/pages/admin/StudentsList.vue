@@ -1,6 +1,6 @@
 <template>
     <main class="p-4 md:ml-64 h-auto pt-20 bg-red-800">
-            <h1 class="text-center text-lg font-bold bg-gray-200 border-b border-gray-200 p-3">STUDENTS LIST</h1>
+            <h1 class="text-center text-4xl font-bold bg-gray-200 border-b border-gray-200 p-3">STUDENTS LIST</h1>
             <!-- <template> -->
         <!-- <ThemeSwitcher /> -->
         <div class="card">

@@ -63,6 +63,11 @@ const routes = [
     name: 'login',
     component: () => import('../pages/admin/LoginPage.vue'),
   },
+  {
+    path: '/test',
+    name: 'test',
+    component: () => import('../pages/TestPage.vue'),
+  },
 
   // Add more routes here
 ];
