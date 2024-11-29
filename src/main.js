@@ -9,7 +9,7 @@ import Aura from '@primevue/themes/aura';
 
 import Stepper from 'primevue/stepper';
 import StepList from 'primevue/steplist';
-import StepPanels from 'primevue/steppanels';
+import StepPanels from 'primevue/steppanels'
 import StepItem from 'primevue/stepitem';
 import Step from 'primevue/step';
 import StepPanel from 'primevue/steppanel';
@@ -37,6 +37,11 @@ import Rating from 'primevue/rating';
 import Select from 'primevue/select';
 import 'primeicons/primeicons.css';
 import Tag from 'primevue/tag';
+import Fluid from 'primevue/fluid';
+import Textarea from 'primevue/textarea';
+import { FormField } from '@primevue/forms';
+import Password from 'primevue/password';
+import Message from 'primevue/message';
 
 
 const app = createApp(App)
@@ -76,5 +81,11 @@ app.component('InputIcon', InputIcon);
 app.component('Rating', Rating);
 app.component('Select', Select);
 app.component('Tag', Tag);
+app.component('Fluid', Fluid);
+app.component('Textarea', Textarea);
+app.component('FormField', FormField);
+app.component('ZodResolver', zodResolver);
+app.component('Password', Password);
+app.component('Message', Message);
 
 // app.component('')
