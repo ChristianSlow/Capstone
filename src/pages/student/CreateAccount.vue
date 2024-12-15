@@ -1,9 +1,43 @@
 <script setup>
 // import FloatingConfigurator from '../../components/FloatingConfigurator.vue';
 import { ref } from 'vue';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from '../../firebase';
+import { collection, setDoc, doc } from "firebase/firestore";
+import { useRouter } from 'vue-router';
 
-const email = ref('');
-const password = ref('');
+const router = useRouter()
+
+const credentials = ref({
+    name: '',
+    email: '',
+    password: ''
+})
+
+
+const signUp = async () => {
+   await createUserWithEmailAndPassword(auth, credentials.value.email, credentials.value.password)
+      .then(async (userCredential) => {
+        const user = userCredential.user;
+
+        const docRef = await setDoc(doc(db, "users", user.uid), {
+            name: credentials.value.name,
+            email: credentials.value.email,
+            role: 'student'
+        });
+        
+        router.push('/infopage')
+
+    })
+    .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorMessage);
+       
+      });
+
+}
+
 const checked = ref(false);
 </script>
 
@@ -32,15 +66,18 @@ const checked = ref(false);
                             </g>
                         </svg> -->
                         <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to Tanon College!</div>
-                        <span class="text-muted-color font-medium">Sign in to continue</span>
+                        <span class="text-muted-color font-medium">Sign up to continue</span>
                     </div>
 
                     <div>
+                        <label for="name" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Name</label>
+                        <InputText id="name" type="text" placeholder="Input your name" class="w-full md:w-[30rem] mb-8" v-model="credentials.name" />
+
                         <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-                        <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-8" v-model="email" />
+                        <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-8" v-model="credentials.email" />
 
                         <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
-                        <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
+                        <InputText id="password1" v-model="credentials.password" placeholder="Password" :toggleMask="true" class="mb-4" fluid :feedback="false"/>
                         <div class="flex items-center justify-between mt-2 mb-8 gap-8">
                             <div class="flex items-center">
                                 <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
@@ -48,7 +85,7 @@ const checked = ref(false);
                             </div>
                             <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
                         </div>
-                        <Button label="Sign In" class="w-full" as="router-link" to="/"></Button>
+                        <Button label="Sign Up" class="w-full" @click="signUp()"></Button>
                     </div>
                 </div>
             </div>

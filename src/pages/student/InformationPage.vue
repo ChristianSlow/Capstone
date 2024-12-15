@@ -1,5 +1,16 @@
 <script setup>
 import { ref } from 'vue';
+import { collection, addDoc } from "firebase/firestore"; 
+
+const info = ref({
+    fname: '',
+    mname: '',
+    lname: '',
+    gender: '',
+    dateofbirth: '',
+    password: ''
+})
+
 
 const dropdownItems = ref([
     { name: 'Male', code: 'Male' },
@@ -27,7 +38,6 @@ const major = ref([
     { name: 'Major in Filipino', code: 'Filipino' },
     { name: 'Major in Mathematics', code: 'Matemathics' },
 ]);
-const dropdownItem = ref(null);
 </script>
 
 <template>
@@ -120,18 +130,18 @@ const dropdownItem = ref(null);
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="firstname2">First Name</label>
-                        <InputText id="firstname2" type="text" />
+                        <InputText v-model="info.fname" id="firstname2" type="text" />
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="lastname2">Middle Name</label>
-                        <InputText id="lastname2" type="text" />
+                        <InputText v-model="info.mname" id="lastname2" type="text" />
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="lastname2">Last Name</label>
-                        <InputText id="lastname2" type="text" />
+                        <InputText v-model="info.lname" id="lastname2" type="text" />
                     </div>
                 </div>
-                <div class="flex flex-col md:flex-row gap-4">
+                <!-- <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex flex-wrap gap-2 w-full">
                        <label for="lastname2">Email</label>
                        <InputText id="lastname2" type="text" />
@@ -144,15 +154,15 @@ const dropdownItem = ref(null);
                         <label for="lastname2">Password</label>
                         <InputText id="lastname2" type="text" />
                     </div>
-                </div>
+                </div> -->
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="date">Date of Birth</label>
-                        <InputText id="date" type="date" />
+                        <InputText v-model="info.dateofbirth" id="date" type="date" />
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="lastname2">Sex</label>
-                        <Select id="ses" v-model="dropdownItem" :options="dropdownItems" optionLabel="name" placeholder="Select Sex" class="w-full"></Select>
+                        <Select id="ses" v-model="info.gender" :options="dropdownItems" optionLabel="name" placeholder="Select Sex" class="w-full"></Select>
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="lastname2">Civil Status</label>
