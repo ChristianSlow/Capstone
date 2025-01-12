@@ -84,7 +84,6 @@ app.component('Tag', Tag);
 app.component('Fluid', Fluid);
 app.component('Textarea', Textarea);
 app.component('FormField', FormField);
-app.component('ZodResolver', zodResolver);
 app.component('Password', Password);
 app.component('Message', Message);
 
