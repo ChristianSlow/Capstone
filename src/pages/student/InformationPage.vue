@@ -1,12 +1,12 @@
 <script setup>
-import { ref } from 'vue';
-
-
+import { computed, ref } from 'vue';
+import { collection, addDoc } from "firebase/firestore"; 
+import { db } from '../../firebase';
 
 const info = ref({
-    fname: '',
-    mname: '',
-    lname: '',
+    fname: 'roland',
+    mname: 'yess',
+    lname: 'njoo',
     gender: '',
     dateofbirth: '',
     password: '',
@@ -16,9 +16,13 @@ const info = ref({
     email: '',
     cellno:'',
     address: '',
-    parents:''
+    parents:'',
+    selectedCourse: ''
 })
 
+const submit = () => {
+    addDoc(collection(db, "StudentInformation"), info.value)
+}
 
 const dropdownItems = ref([
     { name: 'Male', code: 'Male' },
@@ -32,28 +36,34 @@ const dropdownItemss = ref([
     { name: 'Separated', code: 'Separated' },
     { name: 'Civil Partnership', code: 'Civil Partnership' },
 ]);
-const course = ref([
+const courses = ref([
     { 
         name: 'College of Teacher Education', 
-        code: 'Education' , 
         major: [
-            { name: 'Batchelor of Elementary Education', code: 'BEED' },
-            { name: 'Batchelor of Secondary Education', code: 'BSED' },
-            { name: 'Major in English', code: 'English' },
-            { name: 'Major in Filipino', code: 'Filipino' },
-            { name: 'Major in Mathematics', code: 'Matemathics' },
+            { name: 'Batchelor of Elementary Education' },
+            { name: 'Batchelor of Secondary Education' },
+            { name: 'Major in English' },
+            { name: 'Major in Filipino' },
+            { name: 'Major in Mathematics' },
         ]
     },
     { 
         name: 'College of Business Administation', 
-        code: 'Business',
         major: [
-            { name: 'Financial Management', code: 'FM' },
-            { name: 'Marketing Management', code: 'MM' },
+            { name: 'Financial Management' },
+            { name: 'Marketing Management' },
         ]
     },
 
 ]);
+
+const filteredMajor = computed(() => {
+    const selectedCourse = info.value.selectedCourse;
+    const course = courses.value.find(course => course.name === selectedCourse);
+    return course.major
+})
+
+
 </script>
 
 <template>
@@ -210,15 +220,19 @@ const course = ref([
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="state">Course</label>
-                        <Select id="state" v-model="dropdownItem" :options="course" optionLabel="name" placeholder="Select Course" class="w-full"></Select>
+                        <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" v-model="info.selectedCourse">
+                            <option v-for="course in courses" :value="course.name">{{ course.name }}</option>
+                        </select>
                     </div>
-                    <div class="flex flex-wrap gap-2 w-full">
+                    <div class="flex flex-wrap gap-2 w-full" v-if="info.selectedCourse">
                         <label for="state">Major</label>
-                        <Select id="state" v-model="dropdownItem" :options="major" optionLabel="name" placeholder="Select Major" class="w-full"></Select>
+                        <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" v-model="v">
+                            <option v-for="major in filteredMajor" :value="major.name">{{ major.name }}</option>
+                        </select>
                     </div>
                 </div>
                 <div>
-                    <Button label="Submit" severity="danger" raised />
+                    <Button @click="submit" label="Submit" severity="danger" raised />
                 </div>
             </div>
         </div>
