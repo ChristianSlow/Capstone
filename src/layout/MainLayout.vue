@@ -2,12 +2,27 @@
 import {RouterView, RouterLink} from 'vue-router'
 import {ref} from 'vue';
 import Popover from 'primevue/popover';
+import { getAuth, signOut } from "firebase/auth";
+import { useRouter } from 'vue-router';
 
-
+const router = useRouter()
 const op = ref()
 
 const toggle = (event) => {
     op.value.toggle(event);
+}
+
+const auth = getAuth();
+const logout = () => {
+   signOut(auth)
+     .then(() => {
+       console.log("User signed out successfully.");
+       router.push('/')
+     })
+     .catch((error) => {
+       console.error("Error signing out:", error);
+     });
+
 }
 
 </script>
@@ -30,7 +45,7 @@ const toggle = (event) => {
                         <div>
                            <span class="font-medium block mb-2">Christian Mahinay</span>
                            <ul class="list-none p-0 m-0 flex flex-col">
-                                 <li class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border">
+                                 <li @click="logout" class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border">
                                  Log out
                                  </li>
                            </ul>

@@ -9,7 +9,14 @@ const info = ref({
     lname: '',
     gender: '',
     dateofbirth: '',
-    password: ''
+    password: '',
+    gender: '',
+    mobileno:'',
+    pofbirth: '',
+    email: '',
+    cellno:'',
+    address: '',
+    parents:''
 })
 
 
@@ -26,18 +33,26 @@ const dropdownItemss = ref([
     { name: 'Civil Partnership', code: 'Civil Partnership' },
 ]);
 const course = ref([
-    { name: 'College of Teacher Education', code: 'Education' },
-    { name: 'College of Business Administation', code: 'Business' },
+    { 
+        name: 'College of Teacher Education', 
+        code: 'Education' , 
+        major: [
+            { name: 'Batchelor of Elementary Education', code: 'BEED' },
+            { name: 'Batchelor of Secondary Education', code: 'BSED' },
+            { name: 'Major in English', code: 'English' },
+            { name: 'Major in Filipino', code: 'Filipino' },
+            { name: 'Major in Mathematics', code: 'Matemathics' },
+        ]
+    },
+    { 
+        name: 'College of Business Administation', 
+        code: 'Business',
+        major: [
+            { name: 'Financial Management', code: 'FM' },
+            { name: 'Marketing Management', code: 'MM' },
+        ]
+    },
 
-]);
-const major = ref([
-    { name: 'Financial Management', code: 'FM' },
-    { name: 'Marketing Management', code: 'MM' },
-    { name: 'Batchelor of Elementary Education', code: 'BEED' },
-    { name: 'Batchelor of Secondary Education', code: 'BSED' },
-    { name: 'Major in English', code: 'English' },
-    { name: 'Major in Filipino', code: 'Filipino' },
-    { name: 'Major in Mathematics', code: 'Matemathics' },
 ]);
 </script>
 
@@ -171,26 +186,26 @@ const major = ref([
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="lastname2">Mobile No.</label>
-                        <InputText id="mobileno" type="number" />
+                        <InputText id="mobileno" v-model="info.mobileno" type="number" />
                     </div>
                 </div>
                 <div class="flex flex-wrap">
                     <label for="address">Place of Birth</label>
-                    <Textarea id="placeofbirth" rows="1" />
+                    <Textarea id="placeofbirth" v-model="info.pofbirth" rows="1" />
                 </div>
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="firstname2">Parents/Guardian Name</label>
-                        <InputText id="parents" type="text" />
+                        <InputText id="parents" v-model="info.parents" type="text" />
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="lastname2">Tel / Cell No.</label>
-                        <InputText id="cellno   " type="number" />
+                        <InputText id="cellno" v-model="info.cellno" type="number" />
                     </div>
                 </div>
                 <div class="flex flex-wrap">
                     <label for="address">Home Address</label>
-                    <Textarea id="placeofbirth" rows="1" />
+                    <Textarea id="home address" v-model="info.address" rows="1" />
                 </div>
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex flex-wrap gap-2 w-full">
