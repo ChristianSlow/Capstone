@@ -1,12 +1,12 @@
 <script setup>
-import { computed, ref } from 'vue';
-import { collection, addDoc } from "firebase/firestore"; 
+import { computed, onMounted, ref } from 'vue';
+import { collection, addDoc, getDocs } from "firebase/firestore"; 
 import { db } from '../../firebase';
 
 const info = ref({
-    fname: 'roland',
-    mname: 'yess',
-    lname: 'njoo',
+    fname: '',
+    mname: '',
+    lname: '',
     gender: '',
     dateofbirth: '',
     password: '',
@@ -17,7 +17,27 @@ const info = ref({
     cellno:'',
     address: '',
     parents:'',
-    selectedCourse: ''
+    selectedCourse: '',
+    major: '',
+})
+
+const courses = ref([]);
+
+const isLoading = ref(false)
+const getData = async () => {
+    courses.value = []
+    isLoading.value = true
+    const querySnapshot = await getDocs(collection(db, "Courses"));
+    querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        courses.value.push({id: doc.id, ...doc.data()});
+        console.log(doc.data());
+    });
+    isLoading.value = false
+};
+
+onMounted(() => {
+    getData();
 })
 
 const submit = () => {
@@ -36,31 +56,11 @@ const dropdownItemss = ref([
     { name: 'Separated', code: 'Separated' },
     { name: 'Civil Partnership', code: 'Civil Partnership' },
 ]);
-const courses = ref([
-    { 
-        name: 'College of Teacher Education', 
-        major: [
-            { name: 'Batchelor of Elementary Education' },
-            { name: 'Batchelor of Secondary Education' },
-            { name: 'Major in English' },
-            { name: 'Major in Filipino' },
-            { name: 'Major in Mathematics' },
-        ]
-    },
-    { 
-        name: 'College of Business Administation', 
-        major: [
-            { name: 'Financial Management' },
-            { name: 'Marketing Management' },
-        ]
-    },
-
-]);
 
 const filteredMajor = computed(() => {
     const selectedCourse = info.value.selectedCourse;
-    const course = courses.value.find(course => course.name === selectedCourse);
-    return course.major
+    const course = courses.value.find(course => course.course === selectedCourse);
+    return course.majors
 })
 
 
@@ -221,13 +221,13 @@ const filteredMajor = computed(() => {
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="state">Course</label>
                         <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" v-model="info.selectedCourse">
-                            <option v-for="course in courses" :value="course.name">{{ course.name }}</option>
+                            <option v-for="course in courses" :value="course.course">{{ course.course }}</option>
                         </select>
                     </div>
                     <div class="flex flex-wrap gap-2 w-full" v-if="info.selectedCourse">
                         <label for="state">Major</label>
-                        <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" v-model="v">
-                            <option v-for="major in filteredMajor" :value="major.name">{{ major.name }}</option>
+                        <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" v-model="info.major">
+                            <option v-for="major in filteredMajor" :value="major">{{ major }}</option>
                         </select>
                     </div>
                 </div>

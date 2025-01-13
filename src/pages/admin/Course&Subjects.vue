@@ -3,14 +3,20 @@ import { ref, onMounted } from 'vue';
 import { FilterMatchMode } from '@primevue/core/api';
 // import { useToast } from 'primevue/usetoast';
 import { ProductService } from '../../service/ProductService';
-import { collection, addDoc, getDocs } from "firebase/firestore"; 
+import { collection, addDoc, getDocs, doc, deleteDoc } from "firebase/firestore"; 
 import { db } from '../../firebase';
 
 const data = ref ({
     course: '',
-    major: '',
+    majors: [],
 })           
 
+const major = ref('')
+
+const addMajor = () => {
+    data.value.majors.push(major.value)
+    major.value = ''
+}
 
 const fromDatabase =     [
             {       
@@ -41,7 +47,7 @@ const getData = async () => {
     const querySnapshot = await getDocs(collection(db, "Courses"));
     querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
-        products.value.push(doc.data());
+        products.value.push({id: doc.id, ...doc.data()});
         console.log(doc.data());
     });
     isLoading.value = false
@@ -105,12 +111,14 @@ const confirmDeleteProduct = (prod) => {
     product.value = prod;
     deleteProductDialog.value = true;
 };
-const deleteProduct = () => {
-    products.value = products.value.filter(val => val.id !== product.value.id);
+const deleteProduct = async () => {
+    console.log(product.value)
+    await deleteDoc(doc(db, "Courses", product.value.id));
     deleteProductDialog.value = false;
     product.value = {};
-    toast.add({severity:'success', summary: 'Successful', detail: 'Product Deleted', life: 3000});
+    getData()
 };
+
 const findIndexById = (id) => {
     let index = -1;
     for (let i = 0; i < products.value.length; i++) {
@@ -204,7 +212,13 @@ const getStatusLabel = (status) => {
 
                 <!-- <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column> -->
                 <Column field="course" header="Course" v-model="data.course" style="min-width: 12rem"></Column>
-                <Column field="major" header="Major" v-model="data.major" style="min-width: 16rem"></Column>  
+                <Column field="inventoryStatus" header="Major" style="min-width: 12rem">
+                    <template #body="slotProps">
+                        <ul>
+                            <li v-for="item in slotProps.data.majors">{{ item }}</li>
+                        </ul>
+                    </template>
+                </Column>
                 <Column field="inventoryStatus" header="Status" style="min-width: 12rem">
                     <template #body="slotProps">
                         <Tag :value="slotProps.data.inventoryStatus" :severity="getStatusLabel(slotProps.data.inventoryStatus)" />
@@ -228,9 +242,16 @@ const getStatusLabel = (status) => {
                     <small v-if="submitted && !data.course" class="text-red-500">Course is required.</small>
                 </div>
                 <div>
+                    <span>Major:</span>
+                    <ul>
+                        <li v-for="major in data.majors" :key="major.id"> {{major}}</li>
+                    </ul>
+                </div>
+                <div>
                     <label for="major" class="block font-bold mb-3">Major</label>
-                    <InputText id="major" v-model="data.major" required="true" autofocus :invalid="submitted && !product.major" fluid />
-                    <small v-if="submitted && !data.major" class="text-red-500">Major is required.</small>   
+                    <InputText id="major" v-model="major" required="true" autofocus :invalid="submitted && !product.major" fluid />
+                    <small v-if="submitted && !major" class="text-red-500">Major is required.</small>  
+                    <Button label="Add" @click="addMajor"/> 
                 </div>
                 <!-- <div>
                     <label for="description" class="block font-bold mb-3">Description</label>
