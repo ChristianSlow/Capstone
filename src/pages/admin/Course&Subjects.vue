@@ -169,7 +169,7 @@ const getStatusLabel = (status) => {
 </script>
 
 <template>
-    <main class="p-4 md:ml-64 h-auto pt-20 bg-red-800">
+    <main class="p-4 md:ml-64 h-auto pt-20 bg-gray-100">
     <div>
         <div class="card">
             <Toolbar class="mb-6">

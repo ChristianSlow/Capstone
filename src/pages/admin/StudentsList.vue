@@ -76,7 +76,7 @@ const getSeverity = (status) => {
 
 </script>
 <template>
-    <main class="p-4 md:ml-64 h-auto pt-20 bg-red-800">
+    <main class="p-4 md:ml-64 h-auto pt-20 bg-gray-100">
             <h1 class="text-center text-4xl font-bold bg-gray-200 border-b border-gray-200 p-3">STUDENTS LIST</h1>
             <!-- <template> -->
         <!-- <ThemeSwitcher /> -->
@@ -129,6 +129,7 @@ const getSeverity = (status) => {
             -->
                 <Column header="Action" style="width: 25%">
                     <template #body="slotProps">
+                        <Button icon="pi pi-eye" outlined rounded class="mr-2"/>
                         <Button icon="pi pi-pencil" outlined rounded class="mr-2" />
                         <Button icon="pi pi-trash" outlined rounded severity="danger"/>
                     </template>

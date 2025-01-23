@@ -50,7 +50,7 @@ const signIn = async (e) => {
 </script>
 <template>
     <div class="flex flex-col md:flex-row lg:flex-row">
-        <div class="flex-1 h-screen bg-gray-200 flex flex-col items-center text-center text-6xl font-bold text-red-800">
+        <div class="flex-1 full-screen bg-gray-200 flex flex-col items-center text-center text-6xl font-bold text-red-800">
             <img src="/courses.png" alt="tlogo">
         </div>
         <div class="flex-1 flex flex-col items-center bg-gray-300">

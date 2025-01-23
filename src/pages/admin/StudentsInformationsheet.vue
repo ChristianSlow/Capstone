@@ -3,7 +3,7 @@ import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
 </script>
 <template>
-    <main class="p-4 md:ml-64 h-auto pt-20 bg-red-800">
+    <main class="p-4 md:ml-64 h-auto pt-20 bg-gray-100">
         <!-- <h1 class="text-center text-lg font-bold">STUDENTS INFORMATION SHEET</h1> -->
         <div class="flex flex-col bg-white">
                             <h1 class="text-center text-4xl font-bold border-b bg-gray-200 border-gray-200 p-5"> Student's Information Sheet</h1>
