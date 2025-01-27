@@ -1,3 +1,52 @@
+                <script setup>
+                import { ref, onMounted } from 'vue';
+                import { getDocs, collection, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+                import { db } from '../../firebase'; // Firebase config file
+                import { FilterMatchMode } from '@primevue/core/api';
+                
+                // Refs
+                const products = ref([]);
+                const selectedProducts = ref([]);
+                const productDialog = ref(false);
+                const deleteProductDialog = ref(false);
+                const product = ref({});
+                const submitted = ref(false);
+                const filters = ref({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
+                
+                // Fetch accounts from Firestore
+                const fetchAccounts = async () => {
+                    const querySnapshot = await getDocs(collection(db, 'users'));
+                    products.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                };
+                
+                // Save or Update Account
+                const saveProduct = async () => {
+                    submitted.value = true;
+                    if (product.value.name?.trim()) {
+                        if (product.value.id) {
+                            // Update existing account
+                            const docRef = doc(db, 'accounts', product.value.id);
+                            await updateDoc(docRef, { ...product.value });
+                        } else {
+                            // Add new account
+                            await addDoc(collection(db, 'accounts'), product.value);
+                        }
+                        productDialog.value = false;
+                        fetchAccounts(); // Refresh data
+                    }
+                };
+                
+                // Delete Account
+                const deleteProduct = async () => {
+                    const docRef = doc(db, 'accounts', product.value.id);
+                    await deleteDoc(docRef);
+                    deleteProductDialog.value = false;
+                    fetchAccounts(); // Refresh data
+                };
+                
+                // Lifecycle Hook
+                onMounted(fetchAccounts);
+                </script>
 <template>
     <main class="p-4 md:ml-64 h-auto pt-20 bg-gray-100">
         <div>
@@ -28,7 +77,7 @@
                     :filters="filters"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     :rowsPerPageOptions="[5, 10, 25]"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} accounts"
                 >
                     <template #header>
                         <div class="flex flex-wrap gap-2 items-center justify-between">
@@ -44,6 +93,7 @@
 
                     <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
                     <Column field="name" header="Name" style="min-width: 16rem"></Column>
+                    <Column field="email" header="Email" style="min-width: 16rem"></Column>
                     <Column field="role" header="Role" style="min-width: 10rem"></Column>
                     <Column :exportable="false" style="min-width: 12rem">
                         <template #body="slotProps">
@@ -54,7 +104,7 @@
                 </DataTable>
             </div>
 
-            <!-- Add/Edit Product Dialog -->
+            <!-- Add/Edit Account Dialog -->
             <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Add Account" :modal="true">
                 <div class="flex flex-col gap-6">
                     <div>
@@ -99,110 +149,7 @@
                     <Button label="Save" icon="pi pi-check" @click="saveProduct" />
                 </template>
             </Dialog>
-
-            <!-- Delete Confirmation Dialog -->
-            <Dialog v-model:visible="deleteProductDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
-                <div class="flex items-center gap-4">
-                    <i class="pi pi-exclamation-triangle text-3xl" />
-                    <span>Are you sure you want to delete <b>{{ product.name }}</b>?</span>
-                </div>
-                <template #footer>
-                    <Button label="No" icon="pi pi-times" text @click="deleteProductDialog = false" />
-                    <Button label="Yes" icon="pi pi-check" @click="deleteProduct" />
-                </template>
-            </Dialog>
-
-            <!-- Delete Multiple Confirmation Dialog -->
-            <Dialog v-model:visible="deleteProductsDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
-                <div class="flex items-center gap-4">
-                    <i class="pi pi-exclamation-triangle text-3xl" />
-                    <span>Are you sure you want to delete the selected accounts?</span>
-                </div>
-                <template #footer>
-                    <Button label="No" icon="pi pi-times" text @click="deleteProductsDialog = false" />
-                    <Button label="Yes" icon="pi pi-check" text @click="deleteSelectedProducts" />
-                </template>
-            </Dialog>
         </div>
     </main>
 </template>
 
-<script setup>
-// Imports
-import { ref, onMounted } from 'vue';
-import { FilterMatchMode } from '@primevue/core/api';
-
-// Mock Database
-const fromDatabase = [
-    { name: 'Christian Mahinay', role: 'Admin', email: 'christianmahinay@gmail.com', password: 'password' },
-    { name: 'Roland Clarion', role: 'Registrar', email: 'roland@gmail.com', password: 'password' },
-    { name: 'Hann Samm Beleganio', role: 'Ossa Coordinator', email: 'samm@gmail.com', password: 'password' },
-    { name: 'Cristian Jay Benigay', role: 'Assistant', email: 'cristian@gmail.com', password: 'password' },
-];
-
-// Refs and Variables
-const products = ref([]);
-const selectedProducts = ref([]);
-const productDialog = ref(false);
-const deleteProductDialog = ref(false);
-const deleteProductsDialog = ref(false);
-const product = ref({});
-const submitted = ref(false);
-const filters = ref({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
-
-// Lifecycle
-onMounted(() => {
-    products.value = fromDatabase;
-});
-
-// Methods
-const openNew = () => {
-    product.value = {};
-    submitted.value = false;
-    productDialog.value = true;
-};
-
-const hideDialog = () => {
-    productDialog.value = false;
-    submitted.value = false;
-};
-
-const saveProduct = () => {
-    submitted.value = true;
-    if (product.value.name?.trim()) {
-        if (product.value.id) {
-            products.value = products.value.map((p) => (p.id === product.value.id ? product.value : p));
-        } else {
-            product.value.id = Date.now();
-            products.value.push({ ...product.value });
-        }
-        productDialog.value = false;
-        product.value = {};
-    }
-};
-
-const editProduct = (prod) => {
-    product.value = { ...prod };
-    productDialog.value = true;
-};
-
-const confirmDeleteProduct = (prod) => {
-    product.value = prod;
-    deleteProductDialog.value = true;
-};
-
-const deleteProduct = () => {
-    products.value = products.value.filter((p) => p.id !== product.value.id);
-    deleteProductDialog.value = false;
-};
-
-const confirmDeleteSelected = () => {
-    deleteProductsDialog.value = true;
-};
-
-const deleteSelectedProducts = () => {
-    products.value = products.value.filter((p) => !selectedProducts.value.includes(p));
-    deleteProductsDialog.value = false;
-    selectedProducts.value = [];
-};
-</script>
