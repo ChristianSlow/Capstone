@@ -78,6 +78,11 @@ const routes = [
     name: 'createaccount',
     component: () => import('../pages/student/CreateAccount.vue'),
   },
+  {
+    path: '/confirmationpage',
+    name: 'confirmationpage',
+    component: () => import('../pages/student/ConfirmationPage.vue'),
+  },
   // Add more routes here
 ];
 

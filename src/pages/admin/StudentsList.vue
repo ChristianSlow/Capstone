@@ -1,141 +1,111 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { CustomerService } from '../../service/CustomerService';
-import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
-import { collection, addDoc, getDocs, doc, deleteDoc } from "firebase/firestore"; 
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 
+const students = ref([]);
+const isLoading = ref(false);
 
-
-const students = ref([])
-
-const isLoading = ref(false)
 const getData = async () => {
-    students.value = []
-    isLoading.value = true
-    const querySnapshot = await getDocs(collection(db, "StudentInformation"));
-    querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        students.value.push({id: doc.id, ...doc.data()});
-        console.log(doc.data());
-    });
-    isLoading.value = false
+  students.value = [];
+  isLoading.value = true;
+  const querySnapshot = await getDocs(collection(db, 'StudentInformation'));
+  querySnapshot.forEach((doc) => {
+    students.value.push({ id: doc.id, ...doc.data() });
+  });
+  isLoading.value = false;
 };
 
 onMounted(() => {
-    getData();
-})
-
-const customers = ref();
-const selectedCustomer = ref();
-const filters = ref(
-    {
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'country.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        representative: { value: null, matchMode: FilterMatchMode.IN },
-        status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
-    }
-);
-const representatives = ref([
-    { name: 'Amy Elsner', image: 'amyelsner.png' },
-    { name: 'Anna Fali', image: 'annafali.png' },
-    { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-    { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-    { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-    { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-    { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-    { name: 'Onyama Limba', image: 'onyamalimba.png' },
-    { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-    { name: 'XuXue Feng', image: 'xuxuefeng.png' }
-]);
-const statuses = ref(['unqualified', 'qualified', 'new', 'negotiation', 'renewal', 'proposal']);
-
-onMounted(() => {
-    CustomerService.getCustomersSmall().then((data) => (customers.value = data));
+  getData();
 });
 
-const getSeverity = (status) => {
-    switch (status) {
-        case 'unqualified':
-            return 'danger';
-
-        case 'qualified':
-            return 'success';
-
-        case 'new':
-            return 'info';
-
-        case 'negotiation':
-            return 'warn';
-
-        case 'renewal':
-            return null;
-    }
-};
-
+const filters = ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  fname: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+  selectedCourse: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+});
 </script>
+
 <template>
-    <main class="p-4 md:ml-64 h-auto pt-20 bg-gray-100">
-            <h1 class="text-center text-4xl font-bold bg-gray-200 border-b border-gray-200 p-3">STUDENTS LIST</h1>
-            <!-- <template> -->
-        <!-- <ThemeSwitcher /> -->
-        <div class="card">
-            <DataTable v-model:filters="filters" v-model:selection="selectedCustomer" :value="students"
-                    stateStorage="session" stateKey="dt-state-demo-session" paginator :rows="5" filterDisplay="menu"
-                    selectionMode="single" dataKey="id" :globalFilterFields="['name', 'country.name', 'representative.name', 'status']" tableStyle="min-width: 50rem">
-                <template #header>
-                    <IconField>
-                    <InputIcon>
-                        <i class="pi pi-search" />
-                    </InputIcon>
-                    <InputText v-model="filters['global'].value" placeholder="Search name here" />
-                </IconField>
-                </template>
-                <Column field="fname" header="Students Name" style="width: 25%">
-                    <template #body="{ data }">
-                        <div class="flex items-center gap-2">
-                            <span>{{ data.fname }}  {{ data.mname }} {{ data.lname }}</span>
-                        </div>
-                    </template>
-                </Column>
-                <Column header="Course" style="width: 25%">
-                    <template #body="{ data }">
-                        <div class="flex items-center gap-2">
-                            <span>{{ data.selectedCourse }}</span>
-                        </div>
-                    </template>
-                </Column>
-                <Column field="major" header="Major" style="width: 25%">
-                </Column>
-                <!-- <Column header="Major" sortField="representative.name" filterField="representative" :showFilterMatchModes="false" :filterMenuStyle="{ width: '14rem' }" style="width: 25%">
-                    <template #body="{ data }">
-                        <div class="flex items-center gap-2">
-                            <img :alt="data.representative.name" :src="`https://primefaces.org/cdn/primevue/images/avatar/${data.representative.image}`" style="width: 32px" />
-                            <span>{{ data.representative.name }}</span>
-                        </div>
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <MultiSelect v-model="filterModel.value" :options="representatives" optionLabel="name" placeholder="Any">
-                            <template #option="slotProps">
-                                <div class="flex items-center gap-2">
-                                    <img :alt="slotProps.option.name" :src="`https://primefaces.org/cdn/primevue/images/avatar/${slotProps.option.image}`" style="width: 32px" />
-                                    <span>{{ slotProps.option.name }}</span>
-                                </div>
-                            </template>
-                        </MultiSelect>
-                    </template>
-                </Column>
-            -->
-                <Column header="Action" style="width: 25%">
-                    <template #body="slotProps">
-                        <Button icon="pi pi-eye" outlined rounded class="mr-2"/>
-                        <Button icon="pi pi-pencil" outlined rounded class="mr-2" />
-                        <Button icon="pi pi-trash" outlined rounded severity="danger"/>
-                    </template>
-                </Column> 
-                <template #empty> No customers found. </template>
-            </DataTable>
+  <main class="p-6 md:ml-64 h-auto pt-20 bg-gray-100">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <h1 class="text-center text-3xl font-bold bg-gray-200 text-gray-800 p-5 border-b border-gray-300">
+        Students List
+      </h1>
+
+      <div class="p-6">
+        <div class="mb-4 flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <i class="pi pi-search text-gray-600"></i>
+            <input
+              v-model="filters['global'].value"
+              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              placeholder="Search name here"
+            />
+          </div>
+          <button
+            class="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            Add Student
+          </button>
         </div>
-    </main>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-gray-700 border border-gray-300">
+            <thead class="bg-gray-100 text-gray-800 uppercase text-xs font-bold border-b">
+              <tr>
+                <th class="px-4 py-3">Student Name</th>
+                <th class="px-4 py-3">Course</th>
+                <th class="px-4 py-3">Major</th>
+                <th class="px-4 py-3">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="student in students"
+                :key="student.id"
+                class="border-b hover:bg-gray-50"
+              >
+                <td class="px-4 py-3">{{ student.fname }} {{ student.mname }} {{ student.lname }}</td>
+                <td class="px-4 py-3">{{ student.selectedCourse }}</td>
+                <td class="px-4 py-3">{{ student.major || '-' }}</td>
+                <td class="px-4 py-3">
+                  <div class="flex gap-2">
+                    <button
+                      class="p-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none"
+                    >
+                      <i class="pi pi-eye"></i>
+                    </button>
+                    <button
+                      class="p-2 bg-yellow-500 text-white rounded-md shadow hover:bg-yellow-600 focus:outline-none"
+                    >
+                      <i class="pi pi-pencil"></i>
+                    </button>
+                    <button
+                      class="p-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600 focus:outline-none"
+                    >
+                      <i class="pi pi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr v-if="students.length === 0">
+                <td colspan="4" class="text-center py-4">No students found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-4 flex justify-end">
+          <p class="text-gray-600">Total Students: {{ students.length }}</p>
+        </div>
+      </div>
+    </div>
+  </main>
 </template>
+
+<style scoped>
+/* Add any custom styles here */
+</style>

@@ -42,6 +42,7 @@ import Textarea from 'primevue/textarea';
 import { FormField } from '@primevue/forms';
 import Password from 'primevue/password';
 import Message from 'primevue/message';
+import AutoComplete from 'primevue/autocomplete';
 
 
 const app = createApp(App)
@@ -86,5 +87,6 @@ app.component('Textarea', Textarea);
 app.component('FormField', FormField);
 app.component('Password', Password);
 app.component('Message', Message);
+app.component('AutoComplete', AutoComplete);
 
 // app.component('')

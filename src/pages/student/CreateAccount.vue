@@ -79,10 +79,10 @@ const checked = ref(false);
                         <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
                         <InputText id="password1" v-model="credentials.password" placeholder="Password" :toggleMask="true" class="mb-4" fluid :feedback="false"/>
                         <div class="flex items-center justify-between mt-2 mb-8 gap-8">
-                            <div class="flex items-center">
+                            <!-- <div class="flex items-center">
                                 <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
                                 <label for="rememberme1">Remember me</label>
-                            </div>
+                            </div> -->
                             <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
                         </div>
                         <Button label="Sign Up" class="w-full" @click="signUp()"></Button>

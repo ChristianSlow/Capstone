@@ -40,9 +40,16 @@ onMounted(() => {
     getData();
 })
 
-const submit = () => {
-    addDoc(collection(db, "StudentInformation"), info.value)
-}
+const submit = async () => {
+    try {
+        await addDoc(collection(db, "StudentInformation"), info.value);
+        console.log("Document successfully written!");
+        // Navigate to the "Thank You" page or any other route after submission
+        router.push('../pages/student/ConfirmationPage'); // Replace '/thank-you' with the desired route
+    } catch (error) {
+        console.error("Error adding document: ", error);
+    }
+};
 
 const dropdownItems = ref([
     { name: 'Male', code: 'Male' },

@@ -1,231 +1,135 @@
-<script setup>
-import TreeTable from 'primevue/treetable';
-import Column from 'primevue/column';
-</script>
 <template>
-    <main class="p-4 md:ml-64 h-auto pt-20 bg-gray-100">
-        <!-- <h1 class="text-center text-lg font-bold">STUDENTS INFORMATION SHEET</h1> -->
-        <div class="flex flex-col bg-white">
-                            <h1 class="text-center text-4xl font-bold border-b bg-gray-200 border-gray-200 p-5"> Student's Information Sheet</h1>
-                                <div class="flex flex-col">
-                                    <div class="flex justify-between">
-                                        <input
-                                            placeholder="ID Number:"
-                                            class="w- p-2 border-b-2 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600"
-                                            type="text"
-                                        />
-                                        <input 
-                                            placeholder="Date:"
-                                            class="w- p-2 border-b-2 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600"
-                                            type="date"
-                                        />
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <input
-                                            placeholder="Last Name:"
-                                            class="w- p-2 border-b-2 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600"
-                                            type="text"
-                                        />
-                                        <input 
-                                            placeholder="First Name:"
-                                            class="w-[300px] p-2 border-b-2 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600"
-                                            type="text"
-                                        />
-                                        <input
-                                            placeholder="Middle Name:"
-                                            class="w- p-2 border-b-2 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600"
-                                            type="text"
-                                        />
-                                    </div>
-                                    <div>
-                                        <div class="flex justify-between">
-                                            <select id="underline_select" class="block py-2.5 px-0 w-[198px] text-sm border-0 border-b-2 appearance-none dark:text-gray-400 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600 peer">
-                                            <option selected>Term:</option>
-                                            <option value="first">First</option>
-                                            <option value="second">Second</option>
-                                        </select>
-                                        <select id="underline_select" class="block py-2.5 px-0 w-[200px] text-sm border-0 border-b-2 appearance-none dark:text-gray-400 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600 peer">
-                                            <option selected>S.Y:</option>
-                                            <option value="US">2024-2025</option>
-                                        </select>
-                                        <select id="underline_select" class="block py-2.5 px-0 w-[200px] text-sm border-0 border-b-2 appearance-none dark:text-gray-400 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600 peer">
-                                            <option selected>Course:</option>
-                                            <option value="US">BSBA FM</option>
-                                            <option value="BA">BSBA MM</option>
-                                            <option value="CA">BSED FILIPINO</option>
-                                            <option value="FR">BSED MATH</option>
-                                            <option value="DE">BSED ENGLISH</option> 
-                                        </select>
-                                        <select id="underline_select" class="block py-2.5 px-0 w-[197px] text-sm border-0 border-b-2 appearance-none dark:text-gray-400 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600 peer">
-                                            <option selected>Year Level:</option>
-                                            <option value="US">First Year</option>
-                                        </select>
-                                    </div>
-                                    </div>
-                                        <div>
-                                            <div class="flex justify-evenly">
-                                            <input
-                                                placeholder="Mobile Number:"
-                                                class="w- p-2 border-b-2 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600"
-                                                type="text"
-                                            />
-                                            <input
-                                                placeholder="Student Status:"
-                                                class="w- p-2 border-b-2 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600"
-                                                type="text"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-        <div>
-            <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-3">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">
-                                Subject Code
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                <div class="flex items-center">
-                                    Descriptive Title
-                                </div>
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                <div class="flex items-center">
-                                    Units
-                                </div>
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                <div class="flex items-center">
-                                    Schedule
-                                </div>
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                <div class="flex items-center">
-                                    Instructor
-                                </div>
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                <div class="flex items-center">
-                                    Average
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                asd
-                            </th>
-                            <td class="px-6 py-4">
-                                asd
-                            </td>
-                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                asd
-                            </td>
-                            <td class="px-6 py-4">
-                                asd
-                            </td>
-                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                asd
-                            </td>
-                            <td class="px-6 py-4">
-                                asd
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                asd
-                            </th>
-                            <td class="px-6 py-4">
-                                asd
-                            </td>
-                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                antialiased
-                            </td>
-                            <td class="px-6 py-4">
-                                asd
-                            </td>
-                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                asd
-                            </td>
-                            <td class="px-6 py-4">
-                                asd
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                asd
-                            </th>
-                            <td class="px-6 py-4">
-                               antialiasedasd
-                            </td>
-                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                asd
-                            </td>
-                            <td class="px-6 py-4">
-                                asd
-                            </td>
-                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                asd
-                            </td>
-                            <td class="px-6 py-4">
-                                asd
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                das
-                            </th>
-                            <td class="px-6 py-4">
-                               asd
-                            </td>
-                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                asd
-                            </td>
-                            <td class="px-6 py-4">
-                                ads
-                            </td>
-                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                asd
-                            </td>
-                            <td class="px-6 py-4">
-                                asd
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                asd
-                            </th>
-                            <td class="px-6 py-4">
-                                das
-                            </td>
-                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                asd
-                            </td>
-                            <td class="px-6 py-4">
-                                apps-dropdownasd
-                            </td>
-                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                sad
-                            </td>
-                            <td class="px-6 py-4">
-                                asd
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-                <div>
-                    <div class="flex justify-evenly">
-                    <input
-                        placeholder="Total Units:"
-                        class="w- p-2 border-b-2 border-red-800 bg-transparent outline-none focus:border-b-2 focus:border-red-600"
-                        type="text"
-                    />
-                    </div>
-                </div>
+    <main class="p-6 md:ml-64 h-auto pt-20 bg-gray-100">
+      <!-- Title Section -->
+      <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <h1 class="text-center text-4xl font-bold bg-gray-200 text-gray-800 p-5 border-b border-gray-300">
+          Student's Information Sheet
+        </h1>
+  
+        <!-- Form Section -->
+        <div class="p-6 space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <input
+              placeholder="ID Number"
+              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              type="text"
+            />
+            <input
+              placeholder="Date"
+              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              type="date"
+            />
+          </div>
+  
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <input
+              placeholder="Last Name"
+              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              type="text"
+            />
+            <input
+              placeholder="First Name"
+              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              type="text"
+            />
+            <input
+              placeholder="Middle Name"
+              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              type="text"
+            />
+          </div>
+  
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <select
+              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            >
+              <option selected>Term</option>
+              <option value="first">First</option>
+              <option value="second">Second</option>
+            </select>
+            <select
+              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            >
+              <option selected>S.Y.</option>
+              <option value="2024-2025">2024-2025</option>
+            </select>
+            <select
+              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            >
+              <option selected>Course</option>
+              <option value="BSBA FM">BSBA FM</option>
+              <option value="BSBA MM">BSBA MM</option>
+              <option value="BSED FILIPINO">BSED FILIPINO</option>
+              <option value="BSED MATH">BSED MATH</option>
+              <option value="BSED ENGLISH">BSED ENGLISH</option>
+            </select>
+            <select
+              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            >
+              <option selected>Year Level</option>
+              <option value="First Year">First Year</option>
+            </select>
+          </div>
+  
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <input
+              placeholder="Mobile Number"
+              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              type="text"
+            />
+            <input
+              placeholder="Student Status"
+              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              type="text"
+            />
+          </div>
         </div>
-                            </div>
+      </div>
+  
+      <!-- Table Section -->
+      <div class="mt-6 bg-white shadow-md rounded-lg p-6">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-gray-700 border border-gray-300">
+            <thead class="bg-gray-100 text-gray-800 uppercase text-xs font-bold border-b">
+              <tr>
+                <th class="px-4 py-3">Subject Code</th>
+                <th class="px-4 py-3">Descriptive Title</th>
+                <th class="px-4 py-3">Units</th>
+                <th class="px-4 py-3">Schedule</th>
+                <th class="px-4 py-3">Instructor</th>
+                <th class="px-4 py-3">Average</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b hover:bg-gray-50">
+                <td class="px-4 py-3">ABC123</td>
+                <td class="px-4 py-3">Mathematics</td>
+                <td class="px-4 py-3">3</td>
+                <td class="px-4 py-3">MWF 9:00-10:00 AM</td>
+                <td class="px-4 py-3">Dr. Smith</td>
+                <td class="px-4 py-3">89</td>
+              </tr>
+              <tr class="border-b hover:bg-gray-50">
+                <td class="px-4 py-3">DEF456</td>
+                <td class="px-4 py-3">Science</td>
+                <td class="px-4 py-3">3</td>
+                <td class="px-4 py-3">TTh 11:00-12:30 PM</td>
+                <td class="px-4 py-3">Ms. Doe</td>
+                <td class="px-4 py-3">92</td>
+              </tr>
+              <!-- Repeat rows as necessary -->
+            </tbody>
+          </table>
+        </div>
+  
+        <div class="mt-4 flex justify-end">
+          <input
+            placeholder="Total Units"
+            class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            type="text"
+          />
+        </div>
+      </div>
     </main>
-</template>
+  </template>
+  
