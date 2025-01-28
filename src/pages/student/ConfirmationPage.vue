@@ -1,3 +1,19 @@
+<script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const goToSubjects = () => {
+  router.push('/select/course'); // Update with the actual route
+};
+</script>
+
+<style scoped>
+main {
+  font-family: 'Inter', sans-serif;
+}
+</style>
+
 <template>
     <main class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
       <div class="bg-white rounded-lg shadow-lg p-8 max-w-lg text-center">
@@ -19,20 +35,4 @@
       </div>
     </main>
   </template>
-  
-  <script setup>
-  import { useRouter } from 'vue-router';
-  
-  const router = useRouter();
-  
-  const goToSubjects = () => {
-    router.push('/select/course'); // Update with the actual route
-  };
-  </script>
-  
-  <style scoped>
-  main {
-    font-family: 'Inter', sans-serif;
-  }
-  </style>
   
