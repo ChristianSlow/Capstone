@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { collection, addDoc, getDocs } from "firebase/firestore"; 
 import { db } from '../../firebase';
+import {useRouter} from 'vue-router'
 
 const info = ref({
     fname: '',
@@ -21,6 +22,7 @@ const info = ref({
     major: '',
 })
 
+const router = useRouter();
 const courses = ref([]);
 
 const isLoading = ref(false)
@@ -45,7 +47,7 @@ const submit = async () => {
         await addDoc(collection(db, "StudentInformation"), info.value);
         console.log("Document successfully written!");
         // Navigate to the "Thank You" page or any other route after submission
-        router.push('../pages/student/ConfirmationPage'); // Replace '/thank-you' with the desired route
+        router.push('/confirmationpage'); // Replace '/thank-you' with the desired route
     } catch (error) {
         console.error("Error adding document: ", error);
     }
