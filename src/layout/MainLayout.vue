@@ -36,22 +36,23 @@ const logout = () => {
          </a>
          
          <div>
-               <div  @click="toggle" class="cursor-pointer border-4 border-white hover:border-4 rounded-full hover:border-green-600">
-                  <img src="../assets/tlogo.png" class="h-8" alt="Flowbite Logo" />
+               <div  @click="toggle" class="cursor-pointer border-4 border-white hover:border-4 rounded-full">
+                  <img src="../assets/tlogo.png" class="h-8" alt="School Logo" />
                </div>
 
                <Popover ref="op">
-                     <div class="flex flex-col gap-4">
-                        <div>
-                           <span class="font-medium block mb-2">Christian Mahinay</span>
-                           <ul class="list-none p-0 m-0 flex flex-col">
-                                 <li @click="logout" class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border">
-                                 Log out
-                                 </li>
-                           </ul>
-                        </div>
+                  <div class="flex flex-col gap-4">
+                     <div>
+                        <span class="font-medium block mb-2">Christian Mahinay</span>
+                        <ul class="list-none p-0 m-0 flex flex-col">
+                           <li class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border">
+                           <!-- Replace logout link with PrimeVue Button -->
+                           <Button label="Log out" icon="pi pi-sign-out" class="p-button-danger p-button-text" @click="logout" />
+                           </li>
+                        </ul>
                      </div>
-               </Popover>
+                  </div>
+            </Popover>
                </div>
          </div>
       </nav>

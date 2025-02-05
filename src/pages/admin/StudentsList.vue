@@ -1,12 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 
 const students = ref([]);
 const isLoading = ref(false);
 
+// Fetch the list of students
 const getData = async () => {
   students.value = [];
   isLoading.value = true;
@@ -17,6 +18,7 @@ const getData = async () => {
   isLoading.value = false;
 };
 
+// Accept a student
 const acceptStudent = async (id) => {
   try {
     const studentRef = doc(db, 'StudentInformation', id);
@@ -28,6 +30,7 @@ const acceptStudent = async (id) => {
   }
 };
 
+// Deny a student
 const denyStudent = async (id) => {
   try {
     const studentRef = doc(db, 'StudentInformation', id);
@@ -39,10 +42,24 @@ const denyStudent = async (id) => {
   }
 };
 
+// Delete a student
+const deleteStudent = async (id) => {
+  try {
+    const studentRef = doc(db, 'StudentInformation', id);
+    await deleteDoc(studentRef);
+    alert('Student deleted successfully!');
+    getData(); // Refresh the list
+  } catch (error) {
+    console.error('Error deleting student:', error);
+  }
+};
+
+// Fetch student data when component is mounted
 onMounted(() => {
   getData();
 });
 
+// Filters for the student list
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   fname: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -58,7 +75,7 @@ const filters = ref({
       </h1>
 
       <div class="p-6">
-        <!-- Search and Add Student -->
+        <!-- Search Section -->
         <div class="mb-4 flex justify-between items-center">
           <div class="flex items-center gap-3">
             <i class="pi pi-search text-gray-600"></i>
@@ -68,11 +85,6 @@ const filters = ref({
               placeholder="Search name here"
             />
           </div>
-          <!-- <button
-            class="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          >
-            Add Student
-          </button> -->
         </div>
 
         <!-- Students Table -->
@@ -114,6 +126,13 @@ const filters = ref({
                     >
                       Deny
                     </button>
+                    <!-- Delete Icon Button -->
+                    <button
+                      class="p-2 bg-gray-500 text-white rounded-md shadow hover:bg-gray-600 focus:outline-none"
+                      @click="deleteStudent(student.id)"
+                    >
+                      <i class="pi pi-trash"></i>
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -133,7 +152,6 @@ const filters = ref({
     </div>
   </main>
 </template>
-
 
 <style scoped>
 /* Add any custom styles here */
