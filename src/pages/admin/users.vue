@@ -1,54 +1,83 @@
-                <script setup>
-                import { ref, onMounted } from 'vue';
-                import { getDocs, collection, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore';
-                import { db } from '../../firebase'; // Firebase config file
-                import { FilterMatchMode } from '@primevue/core/api';
-                
-                // Refs
-                const products = ref([]);
-                const selectedProducts = ref([]);
-                const productDialog = ref(false);
-                const deleteProductDialog = ref(false);
-                const product = ref({});
-                const submitted = ref(false);
-                const filters = ref({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
-                
-                // Fetch accounts from Firestore
-                const fetchAccounts = async () => {
-                    const querySnapshot = await getDocs(collection(db, 'users'));
-                    products.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-                };
-                
-                // Save or Update Account
-                const saveProduct = async () => {
-                    submitted.value = true;
-                    if (product.value.name?.trim()) {
-                        if (product.value.id) {
-                            // Update existing account
-                            const docRef = doc(db, 'accounts', product.value.id);
-                            await updateDoc(docRef, { ...product.value });
-                        } else {
-                            // Add new account
-                            await addDoc(collection(db, 'accounts'), product.value);
-                        }
-                        productDialog.value = false;
-                        fetchAccounts(); // Refresh data
-                    }
-                };
-                
-                // Delete Account
-                const deleteProduct = async () => {
-                    const docRef = doc(db, 'accounts', product.value.id);
-                    await deleteDoc(docRef);
-                    deleteProductDialog.value = false;
-                    fetchAccounts(); // Refresh data
-                };
-                
-                // Lifecycle Hook
-                onMounted(fetchAccounts);
-                </script>
+<script setup>
+import { ref, onMounted } from 'vue';
+import { getDocs, collection, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase'; // Firebase config file
+import { FilterMatchMode } from '@primevue/core/api';
+
+// Refs
+const products = ref([]);
+const selectedProducts = ref([]);
+const productDialog = ref(false);
+const deleteProductDialog = ref(false);
+const product = ref({});
+const submitted = ref(false);
+const filters = ref({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
+
+// Fetch accounts from Firestore
+const fetchAccounts = async () => {
+    const querySnapshot = await getDocs(collection(db, 'users'));
+    products.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+};
+
+// Save or Update Account
+const saveProduct = async () => {
+    submitted.value = true;
+    if (product.value.name?.trim()) {
+        if (product.value.id) {
+            // Update existing account
+            const docRef = doc(db, 'users', product.value.id); // Use 'users' collection to match the delete operation
+            await updateDoc(docRef, { ...product.value });
+        } else {
+            // Add new account
+            await addDoc(collection(db, 'users'), product.value); // Insert into Firestore
+        }
+        productDialog.value = false;
+        fetchAccounts(); // Refresh data
+    }
+};
+
+// Delete Account
+const deleteProduct = async () => {
+    const docRef = doc(db, 'users', product.value.id); // Ensure we're working with the 'users' collection
+    await deleteDoc(docRef);
+    deleteProductDialog.value = false;
+    product.value = {}; // Clear selected product
+    fetchAccounts(); // Refresh data
+};
+
+// Lifecycle Hook
+onMounted(fetchAccounts);
+
+// Dialog functions
+const openNew = () => {
+    product.value = {};
+    submitted.value = false;
+    productDialog.value = true;
+};
+
+const hideDialog = () => {
+    productDialog.value = false;
+    submitted.value = false;
+};
+
+const confirmDeleteProduct = (prod) => {
+    product.value = prod; // Store the selected product to delete
+    deleteProductDialog.value = true; // Show delete confirmation dialog
+};
+
+const editProduct = (prod) => {
+    product.value = { ...prod }; // Populate form with the selected product's data
+    productDialog.value = true; // Open the edit dialog
+};
+
+// Handle selected rows
+const confirmDeleteSelected = () => {
+    deleteProductDialog.value = true;
+};
+</script>
+
 <template>
-    <main class="p-4 md:ml-64 h-auto pt-20 bg-gray-100">
+    <main class="p-6 md:ml-64 h-auto pt-20 bg-gray-100">
         <div>
             <div class="card">
                 <!-- Toolbar -->
@@ -97,7 +126,7 @@
                     <Column field="role" header="Role" style="min-width: 10rem"></Column>
                     <Column :exportable="false" style="min-width: 12rem">
                         <template #body="slotProps">
-                            <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editProduct(slotProps.data)" />
+                            <!-- <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editProduct(slotProps.data)" /> -->
                             <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteProduct(slotProps.data)" />
                         </template>
                     </Column>
@@ -105,7 +134,7 @@
             </div>
 
             <!-- Add/Edit Account Dialog -->
-            <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Add Account" :modal="true">
+            <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Add/Edit Account" :modal="true">
                 <div class="flex flex-col gap-6">
                     <div>
                         <label for="name" class="block font-bold mb-3">Name</label>
@@ -133,14 +162,6 @@
                                 <RadioButton id="coordinator" v-model="product.role" name="role" value="Ossa Coordinator" />
                                 <label for="coordinator">Ossa Coordinator</label>
                             </div>
-                            <div class="flex items-center gap-2 col-span-6">
-                                <RadioButton id="registrar" v-model="product.role" name="role" value="Registrar" />
-                                <label for="registrar">Registrar</label>
-                            </div>
-                            <div class="flex items-center gap-2 col-span-6">
-                                <RadioButton id="assistant" v-model="product.role" name="role" value="Assistant" />
-                                <label for="assistant">Assistant</label>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -149,7 +170,18 @@
                     <Button label="Save" icon="pi pi-check" @click="saveProduct" />
                 </template>
             </Dialog>
+
+            <!-- Delete Confirmation Dialog -->
+            <Dialog v-model:visible="deleteProductDialog" header="Confirm Deletion" :style="{ width: '450px' }" modal>
+                <div class="flex gap-4 items-center">
+                    <i class="pi pi-exclamation-triangle text-3xl text-yellow-500" />
+                    <span>Are you sure you want to delete the account <b>{{ product.name }}</b>?</span>
+                </div>
+                <template #footer>
+                    <Button label="No" icon="pi pi-times" text @click="deleteProductDialog = false" />
+                    <Button label="Yes" icon="pi pi-check" @click="deleteProduct" />
+                </template>
+            </Dialog>
         </div>
     </main>
 </template>
-

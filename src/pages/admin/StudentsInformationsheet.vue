@@ -1,3 +1,11 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import { FilterMatchMode } from '@primevue/core/api';
+import { collection, addDoc, getDocs, doc, deleteDoc } from "firebase/firestore"; 
+import { db } from '../../firebase';
+
+
+</script>
 <template>
     <main class="p-6 md:ml-64 h-auto pt-20 bg-gray-100">
       <!-- Title Section -->
