@@ -7,6 +7,7 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 
 
+import Dropdown from 'primevue/dropdown';
 import Stepper from 'primevue/stepper';
 import StepList from 'primevue/steplist';
 import StepPanels from 'primevue/steppanels'
@@ -25,7 +26,7 @@ import ThemeSwitcher from './components/ThemeSwitcher.vue';
 import Noir from './presets/Noir.js';
 import ConfirmationService from 'primevue/confirmationservice';
 import DialogService from 'primevue/dialogservice';
-import ToastService from 'primevue/toastservice';
+import ToastService from 'primevue/toastservice'; // Import ToastService
 import Toolbar from 'primevue/toolbar';
 import Dialog from 'primevue/dialog';
 import InputNumber from 'primevue/inputnumber';
@@ -43,7 +44,7 @@ import { FormField } from '@primevue/forms';
 import Password from 'primevue/password';
 import Message from 'primevue/message';
 import AutoComplete from 'primevue/autocomplete';
-
+import Toast from 'primevue/toast';
 
 const app = createApp(App)
 app.use(router)
@@ -71,7 +72,6 @@ app.component('ThemeSwitcher', ThemeSwitcher);
 app.component('Noir', Noir);
 app.use('ConfirmationService', ConfirmationService);
 app.use('DialogService', DialogService);
-app.use('ToastService', ToastService);
 app.component('Toolbar', Toolbar);
 app.component('Dialog', Dialog);
 app.component('InputNumber', InputNumber);
@@ -88,5 +88,8 @@ app.component('FormField', FormField);
 app.component('Password', Password);
 app.component('Message', Message);
 app.component('AutoComplete', AutoComplete);
+app.use(ToastService); // Register ToastService globally
+app.component('Toast', Toast);
+app.component('Dropdown', Dropdown); // Global Registration
 
 // app.component('')
