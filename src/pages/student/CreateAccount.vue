@@ -11,7 +11,7 @@ const router = useRouter()
 const credentials = ref({
     name: '',
     email: '',
-    password: ''
+    password: '',
 })
 
 
@@ -26,7 +26,7 @@ const signUp = async () => {
             role: 'student'
         });
         
-        router.push('/infopage')
+        router.push('/loginpage')
 
     })
     .catch((error) => {
@@ -83,7 +83,7 @@ const checked = ref(false);
                                 <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
                                 <label for="rememberme1">Remember me</label>
                             </div> -->
-                            <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
+                            <!-- <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span> -->
                         </div>
                         <Button label="Sign Up" class="w-full" @click="signUp()"></Button>
                     </div>

@@ -22,22 +22,29 @@ const signIn = async (e) => {
         console.log(user);
 
         const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
+const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
-            const userData = docSnap.data()
-            if (userData.role === 'admin') {
-                router.push('/admin')
-            }
-            if (userData.role === 'student') {
-                router.push('/select/course')
-            }
+if (docSnap.exists()) {
+    console.log("Document data:", docSnap.data());
+    const userData = docSnap.data();
 
-            } else {
-            // docSnap.data() will be undefined in this case
-            console.log("No such document!");
+    if (userData.role === 'admin') {
+        router.push('/admin');
+        return; // Stop further execution
+    }
+
+    if (userData.role === 'student') {
+        if (userData.isDone) {
+            router.push('/infopage');
+        } else {
+            router.push('/select/course');
         }
+        return; // Stop further execution
+    }
+} else {
+    console.log("No such document!");
+}
+
 
     })
     .catch((error) => {
