@@ -26,7 +26,7 @@ const signUp = async () => {
             role: 'student'
         });
         
-        router.push('/loginpage')
+        router.push('/')
 
     })
     .catch((error) => {

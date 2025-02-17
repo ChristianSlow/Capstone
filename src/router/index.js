@@ -46,17 +46,11 @@ const routes = [
         },
     ]
   },
+
   {
-    path: '/select',
-    name: 'select',
-    component: () => import('../layout/StudentLayout.vue'),
-    children : [
-      {
-        path: 'course',
-        name: 'course,',
-        component: () => import('../pages/student/IndexPage.vue'),
-      }
-  ]
+    path: '/designatedsub',
+    name: 'designatedsub,',
+    component: () => import('../pages/student/IndexPage.vue'),
   },
   {
     path: '/loginpage',

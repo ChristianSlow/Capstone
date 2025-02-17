@@ -10,7 +10,7 @@ const selectedMajor = route.query.major;
 
 const goToSubjects = () => {
   router.push({
-    path: '/select/course',
+    path: '/designatedsub',
     query: { course: selectedCourse, major: selectedMajor },
   });
 };
