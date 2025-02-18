@@ -1,69 +1,77 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 
 const students = ref([]);
 const isLoading = ref(false);
+const searchQuery = ref('');
 
 // Fetch the list of students
 const getData = async () => {
   students.value = [];
   isLoading.value = true;
-  const querySnapshot = await getDocs(collection(db, 'StudentInformation'));
-  querySnapshot.forEach((doc) => {
-    students.value.push({ id: doc.id, ...doc.data() });
-  });
+  try {
+    const querySnapshot = await getDocs(collection(db, 'StudentInformation'));
+    querySnapshot.forEach((doc) => {
+      students.value.push({ id: doc.id, ...doc.data() });
+    });
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    alert('Failed to fetch students. Please try again.');
+  }
   isLoading.value = false;
 };
+
+// Computed property for filtered students
+const filteredStudents = computed(() => {
+  const query = searchQuery.value.toLowerCase();
+  if (!query) return students.value;
+  return students.value.filter(student =>
+    (student.fname + ' ' + student.mname + ' ' + student.lname).toLowerCase().includes(query) ||
+    (student.selectedCourse || '').toLowerCase().includes(query) ||
+    (student.major || '').toLowerCase().includes(query)
+  );
+});
 
 // Accept a student
 const acceptStudent = async (id) => {
   try {
-    const studentRef = doc(db, 'StudentInformation', id);
-    await updateDoc(studentRef, { status: 'Accepted' });
-    alert('Student accepted successfully!');
-    getData(); // Refresh the list
+    await updateDoc(doc(db, 'StudentInformation', id), { status: 'Accepted' });
+    alert('Student accepted successfully! Email will be sent.');
+    getData();
   } catch (error) {
     console.error('Error accepting student:', error);
   }
 };
 
+
 // Deny a student
 const denyStudent = async (id) => {
   try {
-    const studentRef = doc(db, 'StudentInformation', id);
-    await updateDoc(studentRef, { status: 'Denied' });
+    await updateDoc(doc(db, 'StudentInformation', id), { status: 'Denied' });
     alert('Student denied successfully!');
-    getData(); // Refresh the list
+    getData();
   } catch (error) {
     console.error('Error denying student:', error);
+    alert('Failed to deny student.');
   }
 };
 
 // Delete a student
 const deleteStudent = async (id) => {
   try {
-    const studentRef = doc(db, 'StudentInformation', id);
-    await deleteDoc(studentRef);
+    await deleteDoc(doc(db, 'StudentInformation', id));
     alert('Student deleted successfully!');
-    getData(); // Refresh the list
+    getData();
   } catch (error) {
     console.error('Error deleting student:', error);
+    alert('Failed to delete student.');
   }
 };
 
-// Fetch student data when component is mounted
 onMounted(() => {
   getData();
-});
-
-// Filters for the student list
-const filters = ref({
-  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  fname: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-  selectedCourse: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
 });
 </script>
 
@@ -77,18 +85,25 @@ const filters = ref({
       <div class="p-6">
         <!-- Search Section -->
         <div class="mb-4 flex justify-between items-center">
-          <div class="flex items-center gap-3">
-            <i class="pi pi-search text-gray-600"></i>
+          <div class="relative w-full">
+            <i class="pi pi-search text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2"></i>
             <input
-              v-model="filters['global'].value"
-              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              placeholder="Search name here"
+              v-model="searchQuery"
+              class="w-full p-3 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              placeholder="Search by name, course, or major"
             />
           </div>
         </div>
 
+
+        <!-- Loading Indicator -->
+        <div v-if="isLoading" class="text-center text-gray-600 py-5">
+          <i class="pi pi-spin pi-spinner text-3xl"></i>
+          <p>Loading students...</p>
+        </div>
+
         <!-- Students Table -->
-        <div class="overflow-x-auto">
+        <div v-if="!isLoading" class="overflow-x-auto">
           <table class="w-full text-sm text-left text-gray-700 border border-gray-300">
             <thead class="bg-gray-100 text-gray-800 uppercase text-xs font-bold border-b">
               <tr>
@@ -100,33 +115,40 @@ const filters = ref({
               </tr>
             </thead>
             <tbody>
-              <!-- Student Rows -->
               <tr
-                v-for="student in students"
+                v-for="student in filteredStudents"
                 :key="student.id"
                 class="border-b hover:bg-gray-50"
               >
                 <td class="px-4 py-3">{{ student.fname }} {{ student.mname }} {{ student.lname }}</td>
                 <td class="px-4 py-3">{{ student.selectedCourse }}</td>
                 <td class="px-4 py-3">{{ student.major || '-' }}</td>
-                <td class="px-4 py-3">{{ student.status || 'Pending' }}</td>
+                <td class="px-4 py-3">
+                  <span
+                    class="px-2 py-1 rounded text-xs font-bold"
+                    :class="{
+                      'bg-green-200 text-green-800': student.status === 'Accepted',
+                      'bg-red-200 text-red-800': student.status === 'Denied',
+                      'bg-yellow-200 text-yellow-800': !student.status || student.status === 'Pending'
+                    }"
+                  >
+                    {{ student.status || 'Pending' }}
+                  </span>
+                </td>
                 <td class="px-4 py-3">
                   <div class="flex gap-2">
-                    <!-- Accept Button -->
                     <button
                       class="p-2 bg-green-500 text-white rounded-md shadow hover:bg-green-600 focus:outline-none"
                       @click="acceptStudent(student.id)"
                     >
-                      Accept
+                      <i class="pi pi-check mr-1"></i> Accept
                     </button>
-                    <!-- Deny Button -->
                     <button
                       class="p-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600 focus:outline-none"
                       @click="denyStudent(student.id)"
                     >
-                      Deny
+                      <i class="pi pi-times mr-1"></i> Deny
                     </button>
-                    <!-- Delete Icon Button -->
                     <button
                       class="p-2 bg-gray-500 text-white rounded-md shadow hover:bg-gray-600 focus:outline-none"
                       @click="deleteStudent(student.id)"
@@ -136,17 +158,16 @@ const filters = ref({
                   </div>
                 </td>
               </tr>
-              <!-- Empty State -->
-              <tr v-if="students.length === 0">
-                <td colspan="5" class="text-center py-4">No students found.</td>
+              <tr v-if="filteredStudents.length === 0">
+                <td colspan="5" class="text-center py-4">No matching students found.</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- Total Students -->
+        <!-- Total Students Count -->
         <div class="mt-4 flex justify-end">
-          <p class="text-gray-600">Total Students: {{ students.length }}</p>
+          <p class="text-gray-600">Total Students: {{ filteredStudents.length }}</p>
         </div>
       </div>
     </div>
@@ -154,5 +175,11 @@ const filters = ref({
 </template>
 
 <style scoped>
-/* Add any custom styles here */
+/* Custom button hover effects */
+button {
+  transition: all 0.2s ease-in-out;
+}
+button:hover {
+  transform: scale(1.05);
+}
 </style>
