@@ -7,6 +7,7 @@ import { doc, getDoc } from "firebase/firestore";
 import Carousel from 'primevue/carousel';
 
 const router = useRouter();
+const showPassword = ref(false);
 
 const credentials = ref({
     email: '',
@@ -62,7 +63,7 @@ const infoSections = ref([
 
             <!-- Centered Content -->
             <div class="relative z-10 flex flex-col justify-center items-center text-white text-center animate-fade-in">
-                <img src="/tlogo.png" alt="Tañon College Logo" class="w-32 h-32 md:w-40 md:h-40 mb-4 drop-shadow-lg">
+                <img src="/tlogow.png" alt="Tañon College Logo" class="w-32 h-32 md:w-40 md:h-40 mb-4 drop-shadow-lg">
                 <h1 class="text-3xl md:text-5xl font-extrabold tracking-wide drop-shadow-md">
                     Welcome to Tañon College
                 </h1>
@@ -96,7 +97,7 @@ const infoSections = ref([
                 <div class="w-full max-w-md bg-white shadow-2xl rounded-2xl p-6 md:p-8 transition transform hover:scale-105">
                     <div class="text-center">
                         <img src="/tlogo.png" class="mx-auto w-20 h-20 md:w-24 md:h-24 drop-shadow-md" alt="Tañon College Logo">
-                        <h1 class="text-xl md:text-2xl font-bold text-red-800 mt-4">Tañon College</h1>
+                        <h1 class="text-xl md:text-2xl font-bold text-red-800">Tañon College</h1>
                     </div>
 
                     <!-- Login Form -->
@@ -108,11 +109,18 @@ const infoSections = ref([
                                 required />
                         </div>
 
-                        <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
-                            <input type="password" v-model="credentials.password" id="password"
-                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none transition"
+                        <div class="relative">
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
+                        <div class="relative">
+                            <input :type="showPassword ? 'text' : 'password'" v-model="credentials.password" id="password" 
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none transition pr-10" 
                                 required />
+                            <button type="button" @click="showPassword = !showPassword" 
+                                class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700">
+                                <i :class="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+                            </button>
+                        </div>
+                        <p v-if="passwordError" class="text-red-500 text-sm mt-1">{{ passwordError }}</p>
                         </div>
 
                         <div class="flex justify-between items-center">
