@@ -8,6 +8,7 @@ import Carousel from 'primevue/carousel';
 
 const router = useRouter();
 const showPassword = ref(false);
+const loginError = ref(""); // Error message for wrong credentials
 
 const credentials = ref({
     email: '',
@@ -16,6 +17,8 @@ const credentials = ref({
 
 const signIn = async (e) => {
     e.preventDefault();
+    loginError.value = ""; // Reset error message before login attempt
+
     try {
         const userCredential = await signInWithEmailAndPassword(auth, credentials.value.email, credentials.value.password);
         const user = userCredential.user;
@@ -39,6 +42,15 @@ const signIn = async (e) => {
         }
     } catch (error) {
         console.error("Login error:", error.message);
+
+        // Handle specific authentication errors
+        if (error.code === 'auth/wrong-password') {
+            loginError.value = "Incorrect password. Please try again.";
+        } else if (error.code === 'auth/user-not-found') {
+            loginError.value = "No account found with this email.";
+        } else {
+            loginError.value = "Login failed. Please check your credentials.";
+        }
     }
 };
 
@@ -110,18 +122,22 @@ const infoSections = ref([
                         </div>
 
                         <div class="relative">
-                        <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
-                        <div class="relative">
-                            <input :type="showPassword ? 'text' : 'password'" v-model="credentials.password" id="password" 
-                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none transition pr-10" 
-                                required />
-                            <button type="button" @click="showPassword = !showPassword" 
-                                class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700">
-                                <i :class="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
-                            </button>
+                            <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
+                            <div class="relative">
+                                <input :type="showPassword ? 'text' : 'password'" v-model="credentials.password" id="password" 
+                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none transition pr-10" 
+                                    required />
+                                <button type="button" @click="showPassword = !showPassword" 
+                                    class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700">
+                                    <i :class="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+                                </button>
+                            </div>
                         </div>
-                        <p v-if="passwordError" class="text-red-500 text-sm mt-1">{{ passwordError }}</p>
-                        </div>
+
+                        <!-- Error Message -->
+                        <p v-if="loginError" class="text-red-500 text-sm mt-2 text-center">
+                            {{ loginError }}
+                        </p>
 
                         <div class="flex justify-between items-center">
                             <RouterLink to="/forgot-password" class="text-sm text-blue-600 hover:underline">

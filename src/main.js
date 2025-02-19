@@ -45,6 +45,7 @@ import Password from 'primevue/password';
 import Message from 'primevue/message';
 import AutoComplete from 'primevue/autocomplete';
 import Toast from 'primevue/toast';
+import ConfirmDialog from 'primevue/confirmdialog';
 
 const app = createApp(App)
 app.use(router)
@@ -90,6 +91,7 @@ app.component('Message', Message);
 app.component('AutoComplete', AutoComplete);
 app.use(ToastService); // Register ToastService globally
 app.component('Toast', Toast);
+app.component('ConfirmDialog, ConfirmDialog')
 app.component('Dropdown', Dropdown); // Global Registration
 
 // app.component('')

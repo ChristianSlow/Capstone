@@ -1,143 +1,113 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { FilterMatchMode } from '@primevue/core/api';
-import { collection, addDoc, getDocs, doc, deleteDoc } from "firebase/firestore"; 
+import { collection, onSnapshot, query, where } from "firebase/firestore"; 
 import { db } from '../../firebase';
+// import { InputText } from 'primevue/inputtext';
+// import { Dropdown } from 'primevue/dropdown';
+// import { Card } from 'primevue/card';
 
+const students = ref([]);
+const searchQuery = ref("");
+const filteredStudents = ref([]);
+const courses = ref([]);
+const selectedCourse = ref(null);
+const selectedMajor = ref(null);
+const majors = ref([]);
+const subjects = ref([]);
 
+// Fetch students with real-time updates
+const fetchStudents = () => {
+    const studentQuery = collection(db, "StudentInformation");
+    onSnapshot(studentQuery, (snapshot) => {
+        students.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        filteredStudents.value = students.value;
+    });
+};
+
+// Fetch courses and majors
+const fetchCourses = () => {
+    onSnapshot(collection(db, "Courses"), (snapshot) => {
+        courses.value = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    });
+};
+
+// Fetch subjects based on course and major
+const fetchSubjects = () => {
+    if (!selectedCourse.value || !selectedMajor.value) return;
+    const subjectQuery = query(
+        collection(db, "subjects"),
+        where("course", "==", selectedCourse.value),
+        where("major", "==", selectedMajor.value)
+    );
+    onSnapshot(subjectQuery, (snapshot) => {
+        subjects.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    });
+};
+
+// Update major options when course is selected
+const updateMajors = () => {
+    const courseData = courses.value.find(c => c.course === selectedCourse.value);
+    majors.value = courseData ? courseData.majors : [];
+    selectedMajor.value = null;
+    subjects.value = [];
+};
+
+// Search function
+const searchStudent = () => {
+    const query = searchQuery.value.toLowerCase().trim();
+    if (!query) {
+        filteredStudents.value = students.value;
+    } else {
+        filteredStudents.value = students.value.filter(student =>
+            (`${student.fname} ${student.lname}`.toLowerCase().includes(query) || 
+            student.fname.toLowerCase().includes(query) || 
+            student.lname.toLowerCase().includes(query))
+        );
+    }
+};
+
+onMounted(() => {
+    fetchStudents();
+    fetchCourses();
+});
 </script>
+
 <template>
     <main class="p-6 md:ml-64 h-auto pt-20 bg-gray-100">
-      <!-- Title Section -->
-      <div class="bg-white shadow-md rounded-lg overflow-hidden">
-        <h1 class="text-center text-4xl font-bold bg-gray-200 text-gray-800 p-5 border-b border-gray-300">
-          Student's Information Sheet
-        </h1>
-  
-        <!-- Form Section -->
-        <div class="p-6 space-y-6">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <input
-              placeholder="ID Number"
-              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              type="text"
-            />
-            <input
-              placeholder="Date"
-              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              type="date"
-            />
-          </div>
-  
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <input
-              placeholder="Last Name"
-              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              type="text"
-            />
-            <input
-              placeholder="First Name"
-              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              type="text"
-            />
-            <input
-              placeholder="Middle Name"
-              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              type="text"
-            />
-          </div>
-  
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <select
-              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            >
-              <option selected>Term</option>
-              <option value="first">First</option>
-              <option value="second">Second</option>
-            </select>
-            <select
-              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            >
-              <option selected>S.Y.</option>
-              <option value="2024-2025">2024-2025</option>
-            </select>
-            <select
-              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            >
-              <option selected>Course</option>
-              <option value="BSBA FM">BSBA FM</option>
-              <option value="BSBA MM">BSBA MM</option>
-              <option value="BSED FILIPINO">BSED FILIPINO</option>
-              <option value="BSED MATH">BSED MATH</option>
-              <option value="BSED ENGLISH">BSED ENGLISH</option>
-            </select>
-            <select
-              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            >
-              <option selected>Year Level</option>
-              <option value="First Year">First Year</option>
-            </select>
-          </div>
-  
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <input
-              placeholder="Mobile Number"
-              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              type="text"
-            />
-            <input
-              placeholder="Student Status"
-              class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              type="text"
-            />
-          </div>
+        <!-- Search & Filter Section -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <h1 class="text-2xl font-bold mb-4">Search Student</h1>
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                <InputText v-model="searchQuery" @input="searchStudent" placeholder="Enter student name..." class="p-3 border rounded-md w-full" />
+            </div>
         </div>
-      </div>
-  
-      <!-- Table Section -->
-      <div class="mt-6 bg-white shadow-md rounded-lg p-6">
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm text-left text-gray-700 border border-gray-300">
-            <thead class="bg-gray-100 text-gray-800 uppercase text-xs font-bold border-b">
-              <tr>
-                <th class="px-4 py-3">Subject Code</th>
-                <th class="px-4 py-3">Descriptive Title</th>
-                <th class="px-4 py-3">Units</th>
-                <th class="px-4 py-3">Schedule</th>
-                <th class="px-4 py-3">Instructor</th>
-                <th class="px-4 py-3">Average</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-b hover:bg-gray-50">
-                <td class="px-4 py-3">ABC123</td>
-                <td class="px-4 py-3">Mathematics</td>
-                <td class="px-4 py-3">3</td>
-                <td class="px-4 py-3">MWF 9:00-10:00 AM</td>
-                <td class="px-4 py-3">Dr. Smith</td>
-                <td class="px-4 py-3">89</td>
-              </tr>
-              <tr class="border-b hover:bg-gray-50">
-                <td class="px-4 py-3">DEF456</td>
-                <td class="px-4 py-3">Science</td>
-                <td class="px-4 py-3">3</td>
-                <td class="px-4 py-3">TTh 11:00-12:30 PM</td>
-                <td class="px-4 py-3">Ms. Doe</td>
-                <td class="px-4 py-3">92</td>
-              </tr>
-              <!-- Repeat rows as necessary -->
-            </tbody>
-          </table>
+
+        <!-- Student Information Cards -->
+        <div v-if="filteredStudents.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card v-for="student in filteredStudents" :key="student.id" class="shadow-md">
+                <template #content>
+                    <h2 class="text-lg font-bold">{{ student.fname }} {{ student.lname }}</h2>
+                    <p>Email: {{ student.email }}</p>
+                    <p>Mobile: {{ student.mobileno }}</p>
+                    <p>Course: {{ student.selectedCourse }}</p>
+                    <p>Major: {{ student.major }}</p>
+                </template>
+            </Card>
         </div>
-  
-        <div class="mt-4 flex justify-end">
-          <input
-            placeholder="Total Units"
-            class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            type="text"
-          />
+        <div v-else class="text-center text-gray-500">No students found.</div>
+
+        <!-- Subjects Section -->
+        <div v-if="subjects.length" class="mt-6 bg-white shadow-md rounded-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Subjects for {{ selectedMajor }}</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Card v-for="subject in subjects" :key="subject.id" class="shadow-md">
+                    <template #content>
+                        <h3 class="text-lg font-bold">{{ subject.name }}</h3>
+                        <p>Code: {{ subject.code }}</p>
+                        <p>Units: {{ subject.units }}</p>
+                    </template>
+                </Card>
+            </div>
         </div>
-      </div>
     </main>
-  </template>
-  
+</template>

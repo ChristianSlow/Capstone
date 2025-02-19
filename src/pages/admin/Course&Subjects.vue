@@ -5,11 +5,16 @@ import { FilterMatchMode } from '@primevue/core/api';
 import { ProductService } from '../../service/ProductService';
 import { collection, addDoc, getDocs, doc, deleteDoc } from "firebase/firestore"; 
 import { db } from '../../firebase';
+import { updateDoc } from "firebase/firestore";
 
 const data = ref ({
     course: '',
     majors: [],
-})           
+})        
+
+const removeMajor = (index) => {
+    data.value.majors.splice(index, 1);
+};
 
 const major = ref('')
 
@@ -79,34 +84,29 @@ const hideDialog = () => {
     submitted.value = false;
 };
 const saveProduct = async () => {
-    const result = await addDoc(collection(db, "Courses"), data.value)
-    console.log(result);
-    // submitted.value = true;
-
-    // if (product?.value.name?.trim()) {
-    //     if (product.value.id) {
-    //         product.value.inventoryStatus = product.value.inventoryStatus.value ? product.value.inventoryStatus.value : product.value.inventoryStatus;
-    //         products.value[findIndexById(product.value.id)] = product.value;
-    //         toast.add({severity:'success', summary: 'Successful', detail: 'Product Updated', life: 3000});
-    //     }
-    //     else {
-    //         product.value.id = createId();
-    //         product.value.code = createId();
-    //         product.value.image = 'product-placeholder.svg';
-    //         product.value.inventoryStatus = product.value.inventoryStatus ? product.value.inventoryStatus.value : 'INSTOCK';
-    //         products.value.push(product.value);
-    //         toast.add({severity:'success', summary: 'Successful', detail: 'Product Created', life: 3000});
-    //     }
-
-    //     product.value = {};
-    // }
+    if (product.value.id) {
+        // Update existing course in Firestore
+        const courseRef = doc(db, "Courses", product.value.id);
+        await updateDoc(courseRef, {
+            course: data.value.course,
+            majors: data.value.majors
+        });
+    } else {
+        // Add a new course
+        await addDoc(collection(db, "Courses"), data.value);
+    }
+    
     productDialog.value = false;
-    getData()
+    getData(); // Refresh the list
 };
+
 const editProduct = (prod) => {
-    product.value = {...prod};
+    product.value = { ...prod }; // Store the whole product
+    data.value.course = prod.course; // Load course name
+    data.value.majors = [...(prod.majors || [])]; // Copy existing majors (to avoid reference issues)
     productDialog.value = true;
 };
+
 const confirmDeleteProduct = (prod) => {
     product.value = prod;
     deleteProductDialog.value = true;
@@ -169,23 +169,22 @@ const getStatusLabel = (status) => {
 </script>
 
 <template>
-    <main class="p-4 md:ml-64 h-auto pt-20 bg-gray-100">
-    <div>
-        <div class="card">
+    <main class="p-6 md:ml-64 h-auto pt-20 bg-gray-100">
+        <div class="card bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <!-- 🔹 Toolbar Section -->
             <Toolbar class="mb-6">
                 <template #start>
-                    <Button label="New" icon="pi pi-plus" class="mr-2" @click="openNew" />
-                    <!-- <Button label="Delete" icon="pi pi-trash" severity="danger" outlined @click="confirmDeleteSelected" :disabled="!selectedProducts || !selectedProducts.length" /> -->
+                    <Button label="New Course" icon="pi pi-plus" class="mr-2" severity="primary" @click="openNew" />
                 </template>
                 <template #center>
-                    <h1 class="m-0 font-bold text-4xl">COURSES</h1>
+                    <h1 class="m-0 text-xl font-semibold text-gray-700 tracking-wide">Courses Management</h1>
                 </template>
                 <template #end>
-                    <!-- <FileUpload mode="basic" accept="image/*" :maxFileSize="1000000" label="Import" customUpload chooseLabel="Import" class="mr-2" auto :chooseButtonProps="{ severity: 'secondary' }" /> -->
                     <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
                 </template>
             </Toolbar>
 
+            <!-- 🔹 Data Table -->
             <DataTable
                 ref="dt"
                 v-model:selection="selectedProducts"
@@ -193,98 +192,95 @@ const getStatusLabel = (status) => {
                 dataKey="id"
                 :loading="isLoading"
                 :rows="10"
-                :filters="filters"
-                >
-                <!-- :paginator="true" -->
-                <!-- paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                paginator
                 :rowsPerPageOptions="[5, 10, 25]"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" -->
-                <template #header>
-                    <div class="flex flex-wrap gap-2 items-center ">
-                        <IconField>
-                            <InputIcon>
-                                <i class="pi pi-search" />
-                            </InputIcon>
-                            <InputText v-model="filters['global'].value" placeholder="Search..." />
-                        </IconField>
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} courses"
+                class="p-datatable-striped p-datatable-hoverable-rows"
+            >
+                <!-- Search Input -->
+                <!-- <template #header>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-600 text-sm">Search Courses:</span>
+                        <div class="relative w-72">
+                            <i class="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            <InputText v-model="filters['global'].value" class="pl-10 w-full p-inputtext-sm rounded-lg" />
+                        </div>
                     </div>
-                </template>
+                </template> -->
 
-                <!-- <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column> -->
-                <Column field="course" header="Course" v-model="data.course" style="min-width: 12rem"></Column>
-                <Column field="inventoryStatus" header="Major" style="min-width: 12rem">
+                <!-- Course Name -->
+                <Column field="course" header="Course" sortable style="min-width: 14rem"></Column>
+
+                <!-- Majors List -->
+                <Column header="Majors" style="min-width: 16rem">
                     <template #body="slotProps">
-                        <ul>
-                            <li v-for="item in slotProps.data.majors">{{ item }}</li>
+                        <ul class="text-gray-600 text-sm list-disc pl-4">
+                            <li v-for="major in slotProps.data.majors" :key="major">{{ major }}</li>
                         </ul>
                     </template>
                 </Column>
-                <Column field="inventoryStatus" header="Status" style="min-width: 12rem">
+
+                <!-- Status Column -->
+                <Column header="Status" style="min-width: 10rem">
                     <template #body="slotProps">
-                        <Tag :value="slotProps.data.inventoryStatus" :severity="getStatusLabel(slotProps.data.inventoryStatus)" />
+                        <Tag :value="slotProps.data.inventoryStatus" :severity="getStatusLabel(slotProps.data.inventoryStatus)" class="px-3 py-1 text-xs font-medium" />
                     </template>
                 </Column>
-                <Column :exportable="false" style="min-width: 12rem">
+
+                <!-- Actions Column -->
+                <Column :exportable="false" style="min-width: 10rem; text-align: center;">
                     <template #body="slotProps">
-                        <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editProduct(slotProps.data)" />
-                        <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteProduct(slotProps.data)" />
+                        <Button icon="pi pi-pencil" outlined rounded class="mr-2 p-button-sm p-button-text" @click="editProduct(slotProps.data)" />
+                        <Button icon="pi pi-trash" outlined rounded severity="danger" class="p-button-sm p-button-text" @click="confirmDeleteProduct(slotProps.data)" />
                     </template>
                 </Column>
             </DataTable>
         </div>
 
-        <Dialog v-model:visible="productDialog" :style="{ width: '450px' }" header="Add Course" :modal="true">
-            <div class="flex flex-col gap-6">
-                <img v-if="product.image" :src="`https://primefaces.org/cdn/primevue/images/product/${product.image}`" :alt="product.image" class="block m-auto pb-4" />
+        <!-- 🔹 Course Dialog -->
+        <Dialog v-model:visible="productDialog" :style="{ width: '500px' }" header="Add Course" modal class="p-dialog-sm">
+            <div class="grid gap-4">
+                <!-- Course Name -->
                 <div>
-                    <label for="course" class="block font-bold mb-3">Course</label>
-                    <InputText id="course" v-model="data.course" required="true" autofocus :invalid="submitted && !product.course" fluid />
+                    <label for="course" class="block text-sm font-semibold text-gray-700">Course Name</label>
+                    <InputText id="course" v-model="data.course" required autofocus class="w-full p-inputtext-sm rounded-md" />
                     <small v-if="submitted && !data.course" class="text-red-500">Course is required.</small>
                 </div>
+
+                <!-- Majors List -->
                 <div>
-                    <span>Major:</span>
-                    <ul>
-                        <li v-for="major in data.majors" :key="major.id"> {{major}}</li>
+                    <label class="block text-sm font-semibold text-gray-700">Majors</label>
+                    <ul class="bg-gray-100 p-2 rounded-md">
+                        <li v-for="(major, index) in data.majors" :key="index" class="flex items-center justify-between bg-white p-2 rounded-md shadow-sm mb-2">
+                            <InputText v-model="data.majors[index]" class="flex-1 text-sm p-inputtext-sm mr-2" />
+                            <Button icon="pi pi-trash" severity="danger" text class="p-button-sm" @click="removeMajor(index)" />
+                        </li>
                     </ul>
                 </div>
-                <div>
-                    <label for="major" class="block font-bold mb-3">Major</label>
-                    <InputText id="major" v-model="major" required="true" autofocus :invalid="submitted && !product.major" fluid />
-                    <small v-if="submitted && !major" class="text-red-500">Major is required.</small>  
-                    <Button label="Add" @click="addMajor"/> 
+
+                <!-- Add New Major -->
+                <div class="flex items-center gap-2">
+                    <InputText v-model="major" placeholder="Add new major..." class="flex-1 p-inputtext-sm rounded-md" />
+                    <Button label="Add" icon="pi pi-plus" severity="primary" class="p-button-sm" @click="addMajor" />
                 </div>
             </div>
 
             <template #footer>
-                <Button label="Cancel" icon="pi pi-times" text @click="hideDialog" />
-                <Button label="Save" icon="pi pi-check" @click="saveProduct" />  
+                <Button label="Cancel" icon="pi pi-times" text class="p-button-sm" @click="hideDialog" />
+                <Button label="Save" icon="pi pi-check" severity="success" class="p-button-sm" @click="saveProduct" />
             </template>
         </Dialog>
 
-        <Dialog v-model:visible="deleteProductDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
-            <div class="flex items-center gap-4">
-                <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span v-if="product"
-                    >Are you sure you want to delete <b>{{ product.course }}</b
-                    >?</span
-                >
+        <!-- 🔹 Delete Confirmation Dialog -->
+        <Dialog v-model:visible="deleteProductDialog" :style="{ width: '420px' }" header="Confirm Deletion" modal class="p-dialog-sm">
+            <div class="flex items-center gap-4 text-gray-700">
+                <i class="pi pi-exclamation-triangle text-3xl text-red-500" />
+                <span v-if="product">Are you sure you want to delete <b>{{ product.course }}</b>?</span>
             </div>
             <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteProductDialog = false" />
-                <Button label="Yes" icon="pi pi-check" @click="deleteProduct" />
+                <Button label="No" icon="pi pi-times" text class="p-button-sm" @click="deleteProductDialog = false" />
+                <Button label="Yes" icon="pi pi-check" severity="danger" class="p-button-sm" @click="deleteProduct" />
             </template>
         </Dialog>
-
-        <Dialog v-model:visible="deleteProductsDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
-            <div class="flex items-center gap-4">
-                <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span v-if="product">Are you sure you want to delete the selected course?</span>
-            </div>
-            <template #footer>
-                <Button label="No" icon="pi pi-times" text @click="deleteProductsDialog = false" />
-                <Button label="Yes" icon="pi pi-check" text @click="deleteSelectedProducts" />
-            </template>
-        </Dialog>
-	</div>
-</main>
+    </main>
 </template>

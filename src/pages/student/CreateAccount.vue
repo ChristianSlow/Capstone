@@ -13,8 +13,14 @@ const credentials = ref({
     password: ''
 });
 
+const emailError = ref('');
 const passwordError = ref('');
 const showPassword = ref(false);
+
+const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+};
 
 const validatePassword = (password) => {
     const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -22,11 +28,20 @@ const validatePassword = (password) => {
 };
 
 const signUp = async () => {
+    if (!validateEmail(credentials.value.email)) {
+        emailError.value = "Please enter a valid email address.";
+        return;
+    } else {
+        emailError.value = '';
+    }
+
     if (!validatePassword(credentials.value.password)) {
         passwordError.value = "Password must be at least 8 characters long and include an uppercase letter, a number, and a special character.";
         return;
+    } else {
+        passwordError.value = '';
     }
-    
+
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, credentials.value.email, credentials.value.password);
         const user = userCredential.user;
@@ -44,6 +59,7 @@ const signUp = async () => {
     }
 };
 </script>
+
 
 <template>
     <div class="w-full flex flex-col md:flex-row items-center min-h-screen bg-gray-100">
@@ -68,10 +84,12 @@ const signUp = async () => {
 
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
-                        <input type="email" v-model="credentials.email" id="email" 
+                            <input type="email" v-model="credentials.email" id="email" 
                             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none transition" 
                             required />
+                        <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
                     </div>
+
 
                     <div class="relative">
                         <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
