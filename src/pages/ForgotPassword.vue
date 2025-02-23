@@ -72,7 +72,7 @@ const resetPassword = async () => {
 
                 <!-- Back to Login -->
                 <div class="mt-6 text-center">
-                    <RouterLink to="/login"
+                    <RouterLink to="/"
                         class="w-full inline-block bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-transform transform hover:scale-105 shadow-md">
                         Back to Login
                     </RouterLink>
