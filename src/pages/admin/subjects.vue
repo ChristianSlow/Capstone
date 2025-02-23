@@ -115,7 +115,7 @@ onMounted(fetchCourses);
 </script>
 
 <template>
-  <main class="p-6 md:ml-64 h-auto pt-20 bg-gray-50 min-h-screen">
+  <main class="p-4 md:ml-64 h-auto pt-20 bg-gray-50 min-h-screen">
     <!-- Course & Major Selection -->
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
       <div class="grid md:grid-cols-2 gap-6">

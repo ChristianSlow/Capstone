@@ -169,18 +169,18 @@ const getStatusLabel = (status) => {
 </script>
 
 <template>
-    <main class="p-6 md:ml-64 h-auto pt-20 bg-gray-100">
-        <div class="card bg-white p-6 rounded-lg shadow-md border border-gray-200">
+    <main class="p-4 md:ml-64 h-auto pt-16 bg-gray-100 text-base md:text-lg">
+        <div class="card bg-white p-4 md:p-6 rounded-lg shadow-md border border-gray-200">
             <!-- 🔹 Toolbar Section -->
-            <Toolbar class="mb-6">
+            <Toolbar class="mb-4 md:mb-6 flex flex-col md:flex-row gap-4 md:gap-0 items-start md:items-center">
                 <template #start>
-                    <Button label="New Course" icon="pi pi-plus" class="mr-2" severity="primary" @click="openNew" />
+                    <Button label="New Course" icon="pi pi-plus" class="mr-2 w-full md:w-auto" severity="primary" @click="openNew" />
                 </template>
                 <template #center>
-                    <h1 class="m-0 text-xl font-semibold text-gray-700 tracking-wide">Courses Management</h1>
+                    <h1 class="m-0 text-lg md:text-xl font-semibold text-gray-700 tracking-wide text-center md:text-left">Courses Management</h1>
                 </template>
                 <template #end>
-                    <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
+                    <Button label="Export" icon="pi pi-upload" class="w-full md:w-auto" severity="secondary" @click="exportCSV($event)" />
                 </template>
             </Toolbar>
 
@@ -195,92 +195,65 @@ const getStatusLabel = (status) => {
                 paginator
                 :rowsPerPageOptions="[5, 10, 25]"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} courses"
-                class="p-datatable-striped p-datatable-hoverable-rows"
+                class="p-datatable-striped p-datatable-hoverable-rows text-base md:text-lg"
+                responsiveLayout="scroll"
             >
-                <!-- Search Input -->
-                <!-- <template #header>
-                    <div class="flex items-center justify-between">
-                        <span class="text-gray-600 text-sm">Search Courses:</span>
-                        <div class="relative w-72">
-                            <i class="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                            <InputText v-model="filters['global'].value" class="pl-10 w-full p-inputtext-sm rounded-lg" />
-                        </div>
-                    </div>
-                </template> -->
-
                 <!-- Course Name -->
-                <Column field="course" header="Course" sortable style="min-width: 14rem"></Column>
+                <Column field="course" header="Course" sortable style="min-width: 12rem"></Column>
 
                 <!-- Majors List -->
-                <Column header="Majors" style="min-width: 16rem">
+                <Column header="Majors" style="min-width: 14rem">
                     <template #body="slotProps">
-                        <ul class="text-gray-600 text-sm list-disc pl-4">
+                        <ul class="text-gray-600 text-base md:text-lg list-disc pl-3">
                             <li v-for="major in slotProps.data.majors" :key="major">{{ major }}</li>
                         </ul>
                     </template>
                 </Column>
 
                 <!-- Status Column -->
-                <Column header="Status" style="min-width: 10rem">
+                <Column header="Status" style="min-width: 8rem">
                     <template #body="slotProps">
-                        <Tag :value="slotProps.data.inventoryStatus" :severity="getStatusLabel(slotProps.data.inventoryStatus)" class="px-3 py-1 text-xs font-medium" />
+                        <Tag :value="slotProps.data.inventoryStatus" :severity="getStatusLabel(slotProps.data.inventoryStatus)" class="px-2 py-1 text-base md:text-lg font-medium" />
                     </template>
                 </Column>
 
                 <!-- Actions Column -->
-                <Column :exportable="false" style="min-width: 10rem; text-align: center;">
+                <Column :exportable="false" style="min-width: 8rem; text-align: center;">
                     <template #body="slotProps">
-                        <Button icon="pi pi-pencil" outlined rounded class="mr-2 p-button-sm p-button-text" @click="editProduct(slotProps.data)" />
-                        <Button icon="pi pi-trash" outlined rounded severity="danger" class="p-button-sm p-button-text" @click="confirmDeleteProduct(slotProps.data)" />
+                        <Button icon="pi pi-pencil" outlined rounded class="mr-2 p-button-md p-button-text" @click="editProduct(slotProps.data)" />
+                        <Button icon="pi pi-trash" outlined rounded severity="danger" class="p-button-md p-button-text" @click="confirmDeleteProduct(slotProps.data)" />
                     </template>
                 </Column>
             </DataTable>
         </div>
 
         <!-- 🔹 Course Dialog -->
-        <Dialog v-model:visible="productDialog" :style="{ width: '500px' }" header="Add Course" modal class="p-dialog-sm">
-            <div class="grid gap-4">
-                <!-- Course Name -->
+        <Dialog v-model:visible="productDialog" :style="{ width: '90%', maxWidth: '500px' }" header="Add Course" modal class="p-dialog-md">
+            <div class="grid gap-4 text-base md:text-lg">
                 <div>
-                    <label for="course" class="block text-sm font-semibold text-gray-700">Course Name</label>
-                    <InputText id="course" v-model="data.course" required autofocus class="w-full p-inputtext-sm rounded-md" />
+                    <label for="course" class="block text-base md:text-lg font-semibold text-gray-700">Course Name</label>
+                    <InputText id="course" v-model="data.course" required autofocus class="w-full p-inputtext-md rounded-md" />
                     <small v-if="submitted && !data.course" class="text-red-500">Course is required.</small>
                 </div>
-
-                <!-- Majors List -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700">Majors</label>
+                    <label class="block text-base md:text-lg font-semibold text-gray-700">Majors</label>
                     <ul class="bg-gray-100 p-2 rounded-md">
-                        <li v-for="(major, index) in data.majors" :key="index" class="flex items-center justify-between bg-white p-2 rounded-md shadow-sm mb-2">
-                            <InputText v-model="data.majors[index]" class="flex-1 text-sm p-inputtext-sm mr-2" />
-                            <Button icon="pi pi-trash" severity="danger" text class="p-button-sm" @click="removeMajor(index)" />
+                        <li v-for="(major, index) in data.majors" :key="index" class="flex items-center justify-between bg-white p-3 rounded-md shadow-sm mb-2">
+                            <InputText v-model="data.majors[index]" class="flex-1 text-base md:text-lg p-inputtext-md mr-2" />
+                            <Button icon="pi pi-trash" severity="danger" text class="p-button-md" @click="removeMajor(index)" />
                         </li>
                     </ul>
                 </div>
-
-                <!-- Add New Major -->
                 <div class="flex items-center gap-2">
-                    <InputText v-model="major" placeholder="Add new major..." class="flex-1 p-inputtext-sm rounded-md" />
-                    <Button label="Add" icon="pi pi-plus" severity="primary" class="p-button-sm" @click="addMajor" />
+                    <InputText v-model="major" placeholder="Add new major..." class="flex-1 p-inputtext-md rounded-md" />
+                    <Button label="Add" icon="pi pi-plus" severity="primary" class="p-button-md" @click="addMajor" />
                 </div>
             </div>
-
             <template #footer>
-                <Button label="Cancel" icon="pi pi-times" text class="p-button-sm" @click="hideDialog" />
-                <Button label="Save" icon="pi pi-check" severity="success" class="p-button-sm" @click="saveProduct" />
-            </template>
-        </Dialog>
-
-        <!-- 🔹 Delete Confirmation Dialog -->
-        <Dialog v-model:visible="deleteProductDialog" :style="{ width: '420px' }" header="Confirm Deletion" modal class="p-dialog-sm">
-            <div class="flex items-center gap-4 text-gray-700">
-                <i class="pi pi-exclamation-triangle text-3xl text-red-500" />
-                <span v-if="product">Are you sure you want to delete <b>{{ product.course }}</b>?</span>
-            </div>
-            <template #footer>
-                <Button label="No" icon="pi pi-times" text class="p-button-sm" @click="deleteProductDialog = false" />
-                <Button label="Yes" icon="pi pi-check" severity="danger" class="p-button-sm" @click="deleteProduct" />
+                <Button label="Cancel" icon="pi pi-times" text class="p-button-md" @click="hideDialog" />
+                <Button label="Save" icon="pi pi-check" severity="success" class="p-button-md" @click="saveProduct" />
             </template>
         </Dialog>
     </main>
 </template>
+

@@ -22,7 +22,7 @@ const info = ref({
     selectedCourse: '',
     major: '',
 	sem:'',
-	year:''
+	year:'',
 });
 
 const router = useRouter();

@@ -100,7 +100,7 @@ onMounted(fetchData);
 </script>
 
 <template>
-  <main class="p-6 md:ml-64 min-h-screen pt-20 bg-gray-50">
+  <main class="p-4 md:ml-64 min-h-screen pt-20 bg-gray-50">
     <h1 class="text-4xl font-bold text-gray-800 mb-6">Dashboard</h1>
 
     <!-- Grid Section for Stats -->

@@ -76,7 +76,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="p-6 md:ml-64 h-auto pt-20 bg-gray-100">
+  <main class="p-4 md:ml-64 h-auto pt-20 bg-gray-100">
     <div class="bg-white shadow-lg rounded-lg overflow-hidden">
       <h1 class="text-center text-3xl font-bold bg-gray-200 text-gray-800 p-5 border-b border-gray-300">
         Students List
