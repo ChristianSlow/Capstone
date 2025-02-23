@@ -188,7 +188,7 @@ const filteredMajor = computed(() => {
 					</div>
 				</div>
 				<div class="flex flex-col md:flex-row gap-4">
-					<div class="flex flex-wrap gap-2 w-full">
+					<div class="flex flex-wrap gap-2 w-full text-black">
 						<label for="date">Date of Birth</label>
 						<InputText v-model="info.dateofbirth" id="date" type="date" />
 					</div>
