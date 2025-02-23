@@ -30,10 +30,11 @@ const routes = [
           component: () => import('../pages/admin/Course&Subjects.vue'),
         },
         {
-          path: 'studentsinfo',
+          path: 'studentsinfo/:id',
           name: 'studentsinfo',
           component: () => import('../pages/admin/StudentsInformationsheet.vue'),
-        },
+          props: true // This will pass the ID as a prop to the component
+        },       
         {
           path: 'subjects',
           name: 'subjects',

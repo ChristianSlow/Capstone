@@ -124,12 +124,12 @@ const logout = () => {
                             <span>Students List</span>
                         </RouterLink>
                     </li>
-                    <!-- <li>
+                    <li>
                         <RouterLink to="/admin/studentsinfo" class="flex items-center p-3 rounded-lg hover:bg-gray-200">
                             <i class="pi pi-id-card mr-2"></i>
                             <span>Students Info</span>
                         </RouterLink>
-                    </li> -->
+                    </li>
                     <li>
                         <RouterLink to="/admin/users" class="flex items-center p-3 rounded-lg hover:bg-gray-200">
                             <i class="pi pi-user mr-2"></i>

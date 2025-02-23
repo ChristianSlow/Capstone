@@ -138,23 +138,29 @@ onMounted(() => {
                 <td class="px-4 py-3">
                   <div class="flex gap-2">
                     <button
-                      class="p-2 bg-green-500 text-white rounded-md shadow hover:bg-green-600 focus:outline-none"
-                      @click="acceptStudent(student.id)"
+                    class="p-2 bg-green-500 text-white rounded-md shadow hover:bg-green-600 focus:outline-none"
+                    @click="acceptStudent(student.id)"
                     >
-                      <i class="pi pi-check mr-1"></i> Accept
-                    </button>
-                    <button
-                      class="p-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600 focus:outline-none"
-                      @click="denyStudent(student.id)"
-                    >
-                      <i class="pi pi-times mr-1"></i> Deny
-                    </button>
-                    <button
-                      class="p-2 bg-gray-500 text-white rounded-md shadow hover:bg-gray-600 focus:outline-none"
-                      @click="deleteStudent(student.id)"
-                    >
-                      <i class="pi pi-trash"></i>
-                    </button>
+                    <i class="pi pi-check mr-1"></i> Accept
+                  </button>
+                  <button
+                  class="p-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600 focus:outline-none"
+                  @click="denyStudent(student.id)"
+                  >
+                  <i class="pi pi-times mr-1"></i> Deny
+                  </button>
+                  <button
+                    class="p-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none"
+                    @click="$router.push({ name: 'studentsinfo', params: { id: student.id } })"
+                  >
+                    <i class="pi pi-eye"></i>
+                  </button>
+                  <button
+                    class="p-2 bg-gray-500 text-white rounded-md shadow hover:bg-gray-600 focus:outline-none"
+                    @click="deleteStudent(student.id)"
+                  >
+                    <i class="pi pi-trash"></i>
+                  </button>
                   </div>
                 </td>
               </tr>

@@ -22,6 +22,7 @@ const info = ref({
     selectedCourse: '',
     major: '',
 	sem:'',
+	year:''
 });
 
 const router = useRouter();
@@ -195,7 +196,7 @@ const filteredMajor = computed(() => {
 						<label for="civilstatus">Semester</label>
 						<Dropdown
 							id="civilstatus"
-							v-model="info.civilstatus"
+							v-model="info.sem"
 							:options="dropdownItemsss"
 							optionLabel="name"
 							placeholder="Select Semester"
@@ -206,7 +207,7 @@ const filteredMajor = computed(() => {
 						<label for="civilstatus">Year</label>
 						<Dropdown
 							id="civilstatus"
-							v-model="info.civilstatus"
+							v-model="info.year"
 							:options="dropdownItemssss"
 							optionLabel="name"
 							placeholder="Select Year"

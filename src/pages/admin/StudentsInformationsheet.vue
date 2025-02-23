@@ -1,113 +1,194 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { collection, onSnapshot, query, where } from "firebase/firestore"; 
+import { useRoute, useRouter } from 'vue-router';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
-// import { InputText } from 'primevue/inputtext';
-// import { Dropdown } from 'primevue/dropdown';
-// import { Card } from 'primevue/card';
 
-const students = ref([]);
-const searchQuery = ref("");
-const filteredStudents = ref([]);
-const courses = ref([]);
-const selectedCourse = ref(null);
-const selectedMajor = ref(null);
-const majors = ref([]);
-const subjects = ref([]);
+const route = useRoute();
+const router = useRouter();
 
-// Fetch students with real-time updates
-const fetchStudents = () => {
-    const studentQuery = collection(db, "StudentInformation");
-    onSnapshot(studentQuery, (snapshot) => {
-        students.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        filteredStudents.value = students.value;
-    });
-};
+const info = ref({
+    fname: '',
+    mname: '',
+    lname: '',
+    gender: '',
+    dateofbirth: '',
+    civilstatus: '',
+    mobileno: '',
+    pofbirth: '',
+    email: '',
+    cellno: '',
+    address: '',
+    parents: '',
+    selectedCourse: '',
+    major: '',
+    sem: '',
+    year:''
+});
 
-// Fetch courses and majors
-const fetchCourses = () => {
-    onSnapshot(collection(db, "Courses"), (snapshot) => {
-        courses.value = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-    });
-};
+const isLoading = ref(true);
 
-// Fetch subjects based on course and major
-const fetchSubjects = () => {
-    if (!selectedCourse.value || !selectedMajor.value) return;
-    const subjectQuery = query(
-        collection(db, "subjects"),
-        where("course", "==", selectedCourse.value),
-        where("major", "==", selectedMajor.value)
-    );
-    onSnapshot(subjectQuery, (snapshot) => {
-        subjects.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    });
-};
-
-// Update major options when course is selected
-const updateMajors = () => {
-    const courseData = courses.value.find(c => c.course === selectedCourse.value);
-    majors.value = courseData ? courseData.majors : [];
-    selectedMajor.value = null;
-    subjects.value = [];
-};
-
-// Search function
-const searchStudent = () => {
-    const query = searchQuery.value.toLowerCase().trim();
-    if (!query) {
-        filteredStudents.value = students.value;
-    } else {
-        filteredStudents.value = students.value.filter(student =>
-            (`${student.fname} ${student.lname}`.toLowerCase().includes(query) || 
-            student.fname.toLowerCase().includes(query) || 
-            student.lname.toLowerCase().includes(query))
-        );
+// Fetch student details
+const getStudentDetails = async () => {
+    isLoading.value = true;
+    try {
+        const docRef = doc(db, 'StudentInformation', route.params.id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            info.value = { id: docSnap.id, ...docSnap.data() };
+        } else {
+            console.error('No student found');
+        }
+    } catch (error) {
+        console.error('Error fetching student details:', error);
     }
+    isLoading.value = false;
 };
 
 onMounted(() => {
-    fetchStudents();
-    fetchCourses();
+    getStudentDetails();
 });
 </script>
 
 <template>
-    <main class="p-6 md:ml-64 h-auto pt-20 bg-gray-100">
-        <!-- Search & Filter Section -->
-        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-            <h1 class="text-2xl font-bold mb-4">Search Student</h1>
-            <div class="flex flex-col md:flex-row md:items-center gap-4">
-                <InputText v-model="searchQuery" @input="searchStudent" placeholder="Enter student name..." class="p-3 border rounded-md w-full" />
-            </div>
+  <main class="p-6 md:ml-64 h-auto pt-20 bg-gray-50 flex justify-center">
+    <div class="bg-white shadow-xl rounded-xl overflow-hidden p-8 max-w-5xl w-full">
+      <h1 class="text-center text-4xl font-extrabold text-gray-800 mb-8">
+        Student Profile
+      </h1>
+
+      <!-- Loading Indicator -->
+      <div v-if="isLoading" class="text-center py-8">
+        <i class="pi pi-spin pi-spinner text-5xl text-gray-600"></i>
+        <p class="text-gray-600 mt-3 text-lg">Fetching student details...</p>
+      </div>
+
+      <!-- Student Details -->
+      <div v-if="info && !isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="info-card">
+          <p class="label">Full Name</p>
+          <p class="value">{{ info.fname }} {{ info.mname }} {{ info.lname }}</p>
         </div>
 
-        <!-- Student Information Cards -->
-        <div v-if="filteredStudents.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card v-for="student in filteredStudents" :key="student.id" class="shadow-md">
-                <template #content>
-                    <h2 class="text-lg font-bold">{{ student.fname }} {{ student.lname }}</h2>
-                    <p>Email: {{ student.email }}</p>
-                    <p>Mobile: {{ student.mobileno }}</p>
-                    <p>Course: {{ student.selectedCourse }}</p>
-                    <p>Major: {{ student.major }}</p>
-                </template>
-            </Card>
+        <div class="info-card">
+          <p class="label">Gender</p>
+          <p class="value">{{ info.gender.name }}</p>
         </div>
-        <div v-else class="text-center text-gray-500">No students found.</div>
 
-        <!-- Subjects Section -->
-        <div v-if="subjects.length" class="mt-6 bg-white shadow-md rounded-lg p-6">
-            <h2 class="text-xl font-bold mb-4">Subjects for {{ selectedMajor }}</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Card v-for="subject in subjects" :key="subject.id" class="shadow-md">
-                    <template #content>
-                        <h3 class="text-lg font-bold">{{ subject.name }}</h3>
-                        <p>Code: {{ subject.code }}</p>
-                        <p>Units: {{ subject.units }}</p>
-                    </template>
-                </Card>
-            </div>
+        <div class="info-card">
+          <p class="label">Date of Birth</p>
+          <p class="value">{{ info.dateofbirth }}</p>
         </div>
-    </main>
+
+        <div class="info-card">
+          <p class="label">Place of Birth</p>
+          <p class="value">{{ info.pofbirth }}</p>
+        </div>
+
+        <div class="info-card">
+          <p class="label">Civil Status</p>
+          <p class="value">{{ info.civilstatus.name }}</p>
+        </div>
+
+        <div class="info-card">
+          <p class="label">Mobile No.</p>
+          <p class="value">{{ info.mobileno }}</p>
+        </div>
+
+        <div class="info-card">
+          <p class="label">Email</p>
+          <p class="value">{{ info.email }}</p>
+        </div>
+
+        <div class="info-card">
+          <p class="label">Address</p>
+          <p class="value">{{ info.address }}</p>
+        </div>
+
+        <div class="info-card">
+          <p class="label">Parents</p>
+          <p class="value">{{ info.parents }}</p>
+        </div>
+
+        <div class="info-card">
+          <p class="label">Course</p>
+          <p class="value">{{ info.selectedCourse }}</p>
+        </div>
+
+        <div class="info-card">
+          <p class="label">Major</p>
+          <p class="value">{{ info.major }}</p>
+        </div>
+
+        <div class="info-card">
+          <p class="label">Semester</p>
+          <p class="value">{{ info.sem.name }}</p>
+        </div>
+        <div class="info-card">
+          <p class="label">Year</p>
+          <p class="value">{{ info.year.name }}</p>
+        </div>
+      </div>
+
+      <!-- Back Button -->
+      <div class="mt-8 flex justify-center">
+        <button
+          @click="router.push('/admin/students')"
+          class="back-btn"
+        >
+          <i class="pi pi-arrow-left mr-2"></i> Back to List
+        </button>
+      </div>
+    </div>
+  </main>
 </template>
+
+<style scoped>
+/* === General Styling === */
+.info-card {
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.info-card:hover {
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin-top: 4px;
+}
+
+/* === Back Button === */
+.back-btn {
+  background-color: #4a5568;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.back-btn:hover {
+  background-color: #2d3748;
+  transform: scale(1.05);
+}
+
+</style>
