@@ -141,8 +141,8 @@ const infoSections = ref([
 
                         <div class="flex justify-between items-center">
                             <RouterLink to="/forgot-password" class="text-sm text-blue-600 hover:underline">
-                                Forgot Password?
-                            </RouterLink>
+                            Forgot Password?
+                        </RouterLink>
                         </div>
 
                         <button type="submit"
