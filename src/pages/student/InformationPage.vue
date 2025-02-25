@@ -4,6 +4,7 @@ import { collection, doc, setDoc, getDocs } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '../../firebase';
 import { useRouter } from 'vue-router';
+import Calendar from "primevue/calendar";
 
 const info = ref({
     fname: '',
@@ -188,9 +189,16 @@ const filteredMajor = computed(() => {
 					</div>
 				</div>
 				<div class="flex flex-col md:flex-row gap-4">
-					<div class="flex flex-wrap gap-2 w-full text-black">
+					<div class="flex flex-wrap gap-2 w-full">
 						<label for="date">Date of Birth</label>
-						<InputText v-model="info.dateofbirth" id="date" type="date" />
+							<Calendar
+								v-model="info.dateofbirth"
+								id="date"
+								dateFormat="yy-mm-dd"
+								showIcon
+								class="w-full"
+								aria-placeholder="yy-mm-dd"
+							/>
 					</div>
 					<div class="flex flex-wrap gap-2 w-full">
 						<label for="civilstatus">Semester</label>

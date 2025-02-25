@@ -78,7 +78,7 @@ onMounted(() => {
 
           <div class="info-card">
             <p class="label">Year</p>
-            <p class="value">{{ info.year }}</p>
+            <p class="value">{{ info.year.name }}</p>
           </div>
         </div>
 
@@ -124,7 +124,7 @@ onMounted(() => {
           
           <div class="info-card">
             <p class="label">Semester</p>
-            <p class="value">{{ info.sem }}</p>
+            <p class="value">{{ info.sem.name }}</p>
           </div>
         </div>
 
