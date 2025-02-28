@@ -169,15 +169,15 @@ const getStatusLabel = (status) => {
 </script>
 
 <template>
-    <main class="p-4 md:ml-64 h-auto pt-16 bg-gray-100 text-base md:text-lg">
-        <div class="card bg-white p-4 md:p-6 rounded-lg shadow-md border border-gray-200">
+    <main class="md:ml-64 h-auto pt-14 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white text-base md:text-lg">
+        <div class="card bg-white dark:bg-gray-800 p-2 md:p-3 shadow-md border border-gray-200 dark:border-gray-700">
             <!-- 🔹 Toolbar Section -->
             <Toolbar class="mb-4 md:mb-6 flex flex-col md:flex-row gap-4 md:gap-0 items-start md:items-center">
                 <template #start>
                     <Button label="New Course" icon="pi pi-plus" class="mr-2 w-full md:w-auto" severity="primary" @click="openNew" />
                 </template>
                 <template #center>
-                    <h1 class="m-0 text-lg md:text-xl font-semibold text-gray-700 tracking-wide text-center md:text-left">Courses Management</h1>
+                    <h1 class="m-0 text-lg md:text-xl font-semibold text-gray-700 dark:text-white tracking-wide text-center md:text-left">Courses Management</h1>
                 </template>
                 <template #end>
                     <Button label="Export" icon="pi pi-upload" class="w-full md:w-auto" severity="secondary" @click="exportCSV($event)" />
@@ -204,7 +204,7 @@ const getStatusLabel = (status) => {
                 <!-- Majors List -->
                 <Column header="Majors" style="min-width: 14rem">
                     <template #body="slotProps">
-                        <ul class="text-gray-600 text-base md:text-lg list-disc pl-3">
+                        <ul class="text-gray-600 dark:text-gray-300 text-base md:text-lg list-disc pl-3">
                             <li v-for="major in slotProps.data.majors" :key="major">{{ major }}</li>
                         </ul>
                     </template>
@@ -228,24 +228,24 @@ const getStatusLabel = (status) => {
         </div>
 
         <!-- 🔹 Course Dialog -->
-        <Dialog v-model:visible="productDialog" :style="{ width: '90%', maxWidth: '500px' }" header="Add Course" modal class="p-dialog-md">
+        <Dialog v-model:visible="productDialog" :style="{ width: '90%', maxWidth: '500px' }" header="Add Course" modal class="p-dialog-md bg-white dark:bg-gray-800">
             <div class="grid gap-4 text-base md:text-lg">
                 <div>
-                    <label for="course" class="block text-base md:text-lg font-semibold text-gray-700">Course Name</label>
-                    <InputText id="course" v-model="data.course" required autofocus class="w-full p-inputtext-md rounded-md" />
+                    <label for="course" class="block text-base md:text-lg font-semibold text-gray-700 dark:text-white">Course Name</label>
+                    <InputText id="course" v-model="data.course" required autofocus class="w-full p-inputtext-md rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white" />
                     <small v-if="submitted && !data.course" class="text-red-500">Course is required.</small>
                 </div>
                 <div>
-                    <label class="block text-base md:text-lg font-semibold text-gray-700">Majors</label>
-                    <ul class="bg-gray-100 p-2 rounded-md">
-                        <li v-for="(major, index) in data.majors" :key="index" class="flex items-center justify-between bg-white p-3 rounded-md shadow-sm mb-2">
-                            <InputText v-model="data.majors[index]" class="flex-1 text-base md:text-lg p-inputtext-md mr-2" />
+                    <label class="block text-base md:text-lg font-semibold text-gray-700 dark:text-white">Majors</label>
+                    <ul class="bg-gray-100 dark:bg-gray-700 p-2 rounded-md">
+                        <li v-for="(major, index) in data.majors" :key="index" class="flex items-center justify-between bg-white dark:bg-gray-800 p-3 rounded-md shadow-sm mb-2">
+                            <InputText v-model="data.majors[index]" class="flex-1 text-base md:text-lg p-inputtext-md mr-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white" />
                             <Button icon="pi pi-trash" severity="danger" text class="p-button-md" @click="removeMajor(index)" />
                         </li>
                     </ul>
                 </div>
                 <div class="flex items-center gap-2">
-                    <InputText v-model="major" placeholder="Add new major..." class="flex-1 p-inputtext-md rounded-md" />
+                    <InputText v-model="major" placeholder="Add new major..." class="flex-1 p-inputtext-md rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white" />
                     <Button label="Add" icon="pi pi-plus" severity="primary" class="p-button-md" @click="addMajor" />
                 </div>
             </div>
@@ -256,4 +256,3 @@ const getStatusLabel = (status) => {
         </Dialog>
     </main>
 </template>
-

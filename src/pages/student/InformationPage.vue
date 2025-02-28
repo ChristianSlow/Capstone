@@ -1,17 +1,37 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { collection, doc, setDoc, getDocs } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '../../firebase';
 import { useRouter } from 'vue-router';
-import Calendar from "primevue/calendar";
+import Calendar from 'primevue/calendar';
+import InputText from 'primevue/inputtext';
+import Dropdown from 'primevue/dropdown';
+import Button from 'primevue/button';
+import Textarea from 'primevue/textarea';
+
+const isDarkMode = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+const updateDarkMode = (event) => {
+    isDarkMode.value = event.matches;
+};
+
+onMounted(() => {
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    darkModeMediaQuery.addEventListener('change', updateDarkMode);
+});
+
+onUnmounted(() => {
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    darkModeMediaQuery.removeEventListener('change', updateDarkMode);
+});
 
 const info = ref({
     fname: '',
     mname: '',
     lname: '',
     gender: '',
-    dateofbirth: '',
+    dateofbirth: null,
     civilstatus: '',
     password: '',
     mobileno: '',
@@ -22,62 +42,54 @@ const info = ref({
     parents: '',
     selectedCourse: '',
     major: '',
-	sem:'',
-	year:'',
+    sem: '',
+    year: '',
 });
 
 const router = useRouter();
 const courses = ref([]);
 const userId = ref(null);
 const isLoading = ref(false);
-const isDarkMode = computed(() => window.matchMedia('(prefers-color-scheme: dark)').matches)
-
 const mobileError = ref(false);
 
 const validateMobileNumber = () => {
-	const regex = /^09\d{9}$/; // Ensures it starts with '09' and has 11 digits
-	mobileError.value = !regex.test(info.value.mobileno);
+    const regex = /^09\d{9}$/;
+    mobileError.value = !regex.test(info.value.mobileno);
 };
-/** ✅ Fetch Courses from Firestore */
+
 const getData = async () => {
     courses.value = [];
     isLoading.value = true;
-
     try {
         const querySnapshot = await getDocs(collection(db, 'Courses'));
         querySnapshot.forEach((doc) => {
             courses.value.push({ id: doc.id, ...doc.data() });
         });
-
-        console.log("✅ Courses loaded:", courses.value);
+        console.log('✅ Courses loaded:', courses.value);
     } catch (error) {
-        console.error("❌ Error fetching courses:", error);
+        console.error('❌ Error fetching courses:', error);
     }
-
     isLoading.value = false;
 };
 
-/** ✅ Ensure userId is set before fetching courses */
 onMounted(() => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
         if (user) {
             userId.value = user.uid;
-            console.log("✅ Authenticated User ID:", userId.value);
+            console.log('✅ Authenticated User ID:', userId.value);
             getData();
         } else {
-            console.warn("❌ No user logged in");
+            console.warn('❌ No user logged in');
         }
     });
 });
 
-/** ✅ Submit Student Information */
 const submit = async () => {
     if (!userId.value) {
         console.error('❌ User not logged in. Cannot save data.');
         return;
     }
-
     try {
         await setDoc(doc(db, 'StudentInformation', userId.value), info.value);
         console.log('✅ Document successfully written!');
@@ -87,13 +99,11 @@ const submit = async () => {
     }
 };
 
-/** ✅ Gender Dropdown */
 const dropdownItems = ref([
     { name: 'Male', code: 'Male' },
     { name: 'Female', code: 'Female' },
 ]);
 
-/** ✅ Civil Status Dropdown */
 const dropdownItemss = ref([
     { name: 'Single', code: 'Single' },
     { name: 'Married', code: 'Married' },
@@ -111,12 +121,10 @@ const dropdownItemsss = ref([
 const dropdownItemssss = ref([
     { name: 'First Year', code: 'First Year' },
     { name: 'Second Year', code: 'Second Year' },
-	{ name: 'Third Year', code: 'Third Year' },
+    { name: 'Third Year', code: 'Third Year' },
     { name: 'Fourth Year', code: 'Fourth Year' },
 ]);
 
-
-/** ✅ Filter Majors Based on Selected Course */
 const filteredMajor = computed(() => {
     const selectedCourse = info.value.selectedCourse;
     const course = courses.value.find((course) => course.course === selectedCourse);
@@ -124,15 +132,58 @@ const filteredMajor = computed(() => {
 });
 </script>
 
+<style>
+:root {
+    --bg-light: #f9fafb;
+    --text-light: #1f2937;
+    --input-bg-light: #ffffff;
+    --border-light: #d1d5db;
+
+    --bg-dark: #111827;
+    --text-dark: #f9fafb;
+    --input-bg-dark: #1f2937;
+    --border-dark: #374151;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-dark);
+    }
+
+    input, select, textarea {
+        background-color: var(--input-bg-dark);
+        color: var(--text-dark);
+        border: 1px solid var(--border-dark);
+    }
+
+    .card {
+        background-color: var(--bg-dark);
+        color: var(--text-dark);
+    }
+}
+</style>
+
 <template>
-	<Fluid :class="{'dark': isDarkMode, 'light': !isDarkMode}" class="flex justify-center p-2">
+	<Fluid class="flex justify-center p-2">
 		<div class="flex mt-3">
-			<div class="card flex flex-col gap-4 w-full p-4 rounded-lg shadow-md" :class="{'bg-white text-gray-800': !isDarkMode, 'bg-gray-800 text-white': isDarkMode}">
+			<div class="card flex flex-col gap-4 w-full p-4 rounded-lg shadow-md bg-white text-gray-800">
 				<div class="text-center mb-6">
-					<img class="mx-auto" width="80" height="80" src="/tlogo.png" alt="Tañon College Logo" />
-					<h1 class="text-red-800 text-xl font-bold">TAÑON COLLEGE</h1>
-					<h2 class="text-gray-700 text-md">OFFICE OF THE REGISTRAR AND ADMISSIONS</h2>
-					<p class="text-gray-600 text-sm">San Carlos City, Negros Occidental</p>
+					<img class="mx-auto" width="80" height="80" src="/tlogow.png" alt="Tañon College Logo" />
+					<h1 :class="{'text-red-800': !isDarkMode, 'text-red-500': isDarkMode}" class="text-xl font-bold">
+						TAÑON COLLEGE
+					</h1>
+					<h2 :class="{'text-gray-700': !isDarkMode, 'text-gray-300': isDarkMode}" class="text-md">
+						OFFICE OF THE REGISTRAR AND ADMISSIONS
+					</h2>
+					<p :class="{'text-gray-600': !isDarkMode, 'text-gray-400': isDarkMode}" class="text-sm">
+						San Carlos City, Negros Occidental
+					</p>
 				</div>
 				<!-- Student Information -->
 				<div class="flex flex-col md:flex-row gap-4">
@@ -191,14 +242,11 @@ const filteredMajor = computed(() => {
 				<div class="flex flex-col md:flex-row gap-4">
 					<div class="flex flex-wrap gap-2 w-full">
 						<label for="date">Date of Birth</label>
-							<Calendar
-								v-model="info.dateofbirth"
-								id="date"
-								dateFormat="yy-mm-dd"
-								showIcon
-								class="w-full"
-								aria-placeholder="yy-mm-dd"
-							/>
+						<label for="dateofbirth">Date of Birth</label>
+                    	<Calendar v-model="info.dateofbirth" 
+						dateFormat="yy-mm-dd" 
+						showIcon class="w-full" 
+						/>
 					</div>
 					<div class="flex flex-wrap gap-2 w-full">
 						<label for="civilstatus">Semester</label>
@@ -284,35 +332,3 @@ const filteredMajor = computed(() => {
 		</div>
 	</Fluid>
 </template>
-
-<style>
-:root {
-	--bg-light: #f9fafb;
-	--bg-dark: #1e293b;
-	--text-light: #1f2937;
-  --text-dark: #f9fafb;
-  --input-bg-light: #ffffff;
-  --input-bg-dark: #334155;
-  --border-light: #d1d5db;
-  --border-dark: #475569;
-}
-
-.dark {
-  background-color: var(--bg-dark);
-  color: var(--text-dark);
-}
-
-.light {
-  background-color: var(--bg-light);
-  color: var(--text-light);
-}
-
-/* Apply to inputs */
-.dark input,
-.dark select,
-.dark textarea {
-  background-color: var(--input-bg-dark);
-  color: var(--text-dark);
-  border: 1px solid var(--border-dark);
-}
-</style>

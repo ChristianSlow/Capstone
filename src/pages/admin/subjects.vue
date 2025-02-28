@@ -115,20 +115,20 @@ onMounted(fetchCourses);
 </script>
 
 <template>
-  <main class="p-4 md:ml-64 h-auto pt-20 bg-gray-50 min-h-screen">
+  <main class=" md:ml-64 h-auto pt-20 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
     <!-- Course & Major Selection -->
-    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+    <div class="bg-white dark:bg-gray-800 shadow-md p-4 mb-4">
       <div class="grid md:grid-cols-2 gap-6">
         <div>
-          <label class="font-medium text-gray-700">Course</label>
-          <select v-model="selectedCourse" class="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+          <label class="font-medium text-gray-700 dark:text-gray-300">Course</label>
+          <select v-model="selectedCourse" class="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
             <option value="" disabled>Select Course</option>
             <option v-for="course in courses" :key="course.id" :value="course.course">{{ course.course }}</option>
           </select>
         </div>
         <div v-if="selectedCourse">
-          <label class="font-medium text-gray-700">Major</label>
-          <select v-model="selectedMajor" class="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+          <label class="font-medium text-gray-700 dark:text-gray-300">Major</label>
+          <select v-model="selectedMajor" class="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
             <option value="" disabled>Select Major</option>
             <option v-for="major in filteredMajors" :key="major" :value="major">{{ major }}</option>
           </select>
@@ -137,9 +137,9 @@ onMounted(fetchCourses);
     </div>
 
     <!-- Subjects Table -->
-    <div class="bg-white shadow-md rounded-lg p-6">
+    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
       <div class="flex justify-between items-center mb-4">
-        <h4 class="text-xl font-semibold text-gray-800">Subjects</h4>
+        <h4 class="text-xl font-semibold text-gray-800 dark:text-white">Subjects</h4>
         <Button label="New" icon="pi pi-plus" class="p-button-rounded p-button-primary" @click="openNew" />
       </div>
 
@@ -157,24 +157,24 @@ onMounted(fetchCourses);
 
       <!-- ✅ Total Units Display -->
       <div class="mt-4 flex justify-end">
-        <p class="text-lg font-semibold text-gray-800">Total Units: {{ totalUnits }}</p>
+        <p class="text-lg font-semibold text-gray-800 dark:text-white">Total Units: {{ totalUnits }}</p>
       </div>
     </div>
 
     <!-- Add/Edit Subject Dialog -->
-    <Dialog v-model:visible="productDialog" header="Manage Subject" :modal="true" class="w-96">
+    <Dialog v-model:visible="productDialog" header="Manage Subject" :modal="true" class="w-96 bg-white dark:bg-gray-800">
       <div class="space-y-4">
         <div>
-          <label class="font-medium text-gray-700">Subject Code</label>
-          <InputText v-model.trim="product.code" class="w-full p-2 border rounded-lg" />
+          <label class="font-medium text-gray-700 dark:text-gray-300">Subject Code</label>
+          <InputText v-model.trim="product.code" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" />
         </div>
         <div>
-          <label class="font-medium text-gray-700">Descriptive Title</label>
-          <InputText v-model.trim="product.name" class="w-full p-2 border rounded-lg" />
+          <label class="font-medium text-gray-700 dark:text-gray-300">Descriptive Title</label>
+          <InputText v-model.trim="product.name" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" />
         </div>
         <div>
-          <label class="font-medium text-gray-700">Units</label>
-          <Dropdown v-model="product.units" :options="unitOptions" optionLabel="label" optionValue="value" placeholder="Select Units" class="w-full p-2 border rounded-lg" />
+          <label class="font-medium text-gray-700 dark:text-gray-300">Units</label>
+          <Dropdown v-model="product.units" :options="unitOptions" optionLabel="label" optionValue="value" placeholder="Select Units" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" />
         </div>
       </div>
       <template #footer>
@@ -184,8 +184,8 @@ onMounted(fetchCourses);
     </Dialog>
 
     <!-- ❌ Delete Confirmation Dialog -->
-    <Dialog v-model:visible="deleteProductDialog" header="Confirm Delete" :modal="true" class="w-96">
-      <p>Are you sure you want to delete this subject?</p>
+    <Dialog v-model:visible="deleteProductDialog" header="Confirm Delete" :modal="true" class="w-96 bg-white dark:bg-gray-800">
+      <p class="text-gray-900 dark:text-white">Are you sure you want to delete this subject?</p>
       <template #footer>
         <Button label="No" class="p-button-text" @click="deleteProductDialog = false" />
         <Button label="Yes" class="p-button-danger" @click="deleteProduct" />

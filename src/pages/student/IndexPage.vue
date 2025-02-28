@@ -14,6 +14,14 @@ const selectedCourse = ref(null);
 const selectedMajor = ref(null);
 const auth = getAuth();
 
+const info = ref({
+    fname: '',
+    mname: '',
+    lname: '',
+    sem: '',
+    year: '',
+});
+
 const fetchSubjects = async () => {
   if (!userId.value) {
     isLoading.value = false;
@@ -29,8 +37,16 @@ const fetchSubjects = async () => {
     return;
   }
 
-  selectedCourse.value = studentDocSnap.data().selectedCourse;
-  selectedMajor.value = studentDocSnap.data().major;
+  const studentData = studentDocSnap.data();
+  selectedCourse.value = studentData.selectedCourse;
+  selectedMajor.value = studentData.major;
+
+  // ✅ Assign student name, year, and semester
+  info.value.fname = studentData.fname;
+  info.value.mname = studentData.mname;
+  info.value.lname = studentData.lname;
+  info.value.year = studentData.year;
+  info.value.sem = studentData.sem;
 
   if (!selectedCourse.value || !selectedMajor.value) {
     isLoading.value = false;
@@ -98,8 +114,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="p-8 bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl">
+  <main class="p-1 bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white shadow-lg rounded-lg p-1 w-full max-w-4xl">
 
       <!-- Header with Download Button -->
       <div class="flex justify-end items-center mb-4">
@@ -120,7 +136,12 @@ onMounted(() => {
           <h2 class="text-gray-700 text-md">OFFICE OF THE REGISTRAR AND ADMISSIONS</h2>
           <p class="text-gray-600 text-sm">San Carlos City, Negros Occidental</p>
         </div>
-
+        <h2 class="text-xl font-bold text-gray-800 text-center mb-1">
+          {{ info.fname }} {{ info.mname }} {{ info.lname }}
+        </h2>
+        <h2 class="text-lg font-semibold text-gray-700 text-center mb-4">
+          {{ info.year.name }} - {{ info.sem.name }} Semester
+        </h2>
         <h2 class="text-xl font-bold text-gray-800 text-center mb-1">{{ selectedCourse || 'Loading...' }}</h2>
         <h2 class="text-lg font-semibold text-gray-700 text-center mb-4">{{ selectedMajor || 'Loading...' }}</h2>
 

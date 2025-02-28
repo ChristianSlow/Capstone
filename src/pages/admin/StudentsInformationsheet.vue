@@ -51,16 +51,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="p-4 md:ml-64 h-auto pt-20 bg-gray-100 flex justify-center">
-    <div class="bg-white shadow-lg rounded-xl overflow-hidden p-10 max-w-5xl w-full">
-      <h1 class="text-center text-4xl font-bold text-gray-800 mb-8">
+  <main class="md:ml-64 h-auto pt-20 bg-gray-100 dark:bg-gray-900 flex justify-center text-gray-900 dark:text-white">
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl overflow-hidden p-10 max-w-5xl w-full">
+      <h1 class="text-center text-4xl font-bold text-gray-800 dark:text-white mb-8">
         Student Profile
       </h1>
 
       <!-- Loading Indicator -->
       <div v-if="isLoading" class="text-center py-8">
-        <i class="pi pi-spin pi-spinner text-5xl text-gray-600"></i>
-        <p class="text-gray-600 mt-3 text-lg">Fetching student details...</p>
+        <i class="pi pi-spin pi-spinner text-5xl text-gray-600 dark:text-gray-300"></i>
+        <p class="text-gray-600 dark:text-gray-300 mt-3 text-lg">Fetching student details...</p>
       </div>
 
       <!-- Student Details -->
@@ -171,6 +171,11 @@ onMounted(() => {
   box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.06);
 }
 
+.dark .info-card {
+  background: #1f2937;
+  border-color: #374151;
+}
+
 .info-card:hover {
   box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.12);
   transform: translateY(-4px);
@@ -184,11 +189,19 @@ onMounted(() => {
   letter-spacing: 0.5px;
 }
 
+.dark .label {
+  color: #d1d5db;
+}
+
 .value {
   font-size: 1.3rem;
   font-weight: 700;
   color: #111827;
   margin-top: 5px;
+}
+
+.dark .value {
+  color: #f9fafb;
 }
 
 /* === Back Button === */
@@ -208,5 +221,4 @@ onMounted(() => {
   background-color: #1f2937;
   transform: scale(1.07);
 }
-
 </style>
