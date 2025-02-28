@@ -84,7 +84,9 @@ const infoSections = ref([
 
         <!-- About Section -->
         <div class="w-full max-w-lg mx-auto bg-white shadow-lg rounded-2xl p-6 text-center mt-10">
-            <h2 class="text-xl md:text-2xl font-bold text-red-800">About Our Institution</h2>
+            <img src="/tlogo.png" class="mx-auto w-20 h-20 md:w-24 md:h-24 drop-shadow-md" alt="Tañon College Logo">
+            <h1 class="text-xl md:text-3xl font-bold text-red-800">Tañon College</h1>
+            <h4 class="text-xl md:text-xl pt-4 font-bold text-black" >About Our Institution</h4>
 
             <Carousel :value="infoSections" :numVisible="1" :numScroll="1" :circular="true" :autoplayInterval="3000">
                 <template #item="slotProps">
