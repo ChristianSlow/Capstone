@@ -6,6 +6,7 @@ import { db } from '../../firebase';
 const students = ref([]);
 const isLoading = ref(false);
 const searchQuery = ref('');
+const selectedStatus = ref(''); // Store selected status filter
 
 // Fetch the list of students
 const getData = async () => {
@@ -26,15 +27,19 @@ const getData = async () => {
 // Computed property for filtered students
 const filteredStudents = computed(() => {
   const query = searchQuery.value.toLowerCase();
-  if (!query) return students.value;
-  return students.value.filter(student =>
-    (student.fname + ' ' + student.mname + ' ' + student.lname).toLowerCase().includes(query) ||
-    (student.selectedCourse || '').toLowerCase().includes(query) ||
-    (student.major || '').toLowerCase().includes(query)
-  );
+  const status = selectedStatus.value.toLowerCase();
+
+  return students.value.filter(student => {
+    const matchesQuery = (student.fname + ' ' + student.mname + ' ' + student.lname).toLowerCase().includes(query) ||
+      (student.selectedCourse || '').toLowerCase().includes(query) ||
+      (student.major || '').toLowerCase().includes(query);
+    
+    const matchesStatus = status === '' || (student.status || 'pending').toLowerCase() === status;
+    
+    return matchesQuery && matchesStatus;
+  });
 });
 
-// Accept a student
 const acceptStudent = async (id) => {
   try {
     await updateDoc(doc(db, 'StudentInformation', id), { status: 'Accepted' });
@@ -45,8 +50,6 @@ const acceptStudent = async (id) => {
   }
 };
 
-
-// Deny a student
 const denyStudent = async (id) => {
   try {
     await updateDoc(doc(db, 'StudentInformation', id), { status: 'Denied' });
@@ -58,7 +61,6 @@ const denyStudent = async (id) => {
   }
 };
 
-// Delete a student
 const deleteStudent = async (id) => {
   try {
     await deleteDoc(doc(db, 'StudentInformation', id));
@@ -83,9 +85,10 @@ onMounted(() => {
       </h1>
 
       <div class="p-3">
-        <!-- Search Section -->
-        <div class="mb-4 flex justify-between items-center">
-          <div class="relative w-full">
+        <!-- Filters Section -->
+        <div class="mb-4 flex flex-col md:flex-row justify-between items-center gap-4">
+          <!-- Search Input -->
+          <div class="relative w-full md:w-2/3">
             <i class="pi pi-search text-gray-500 dark:text-gray-300 absolute left-3 top-1/2 transform -translate-y-1/2"></i>
             <input
               v-model="searchQuery"
@@ -93,6 +96,14 @@ onMounted(() => {
               placeholder="Search by name, course, or major"
             />
           </div>
+
+          <!-- Status Filter Dropdown -->
+          <Dropdown 
+            v-model="selectedStatus"
+            :options="['', 'Pending', 'Accepted', 'Denied']"
+            placeholder="Filter by Status"
+            class="w-full md:w-1/3 p-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md"
+          />
         </div>
 
         <!-- Loading Indicator -->
@@ -168,11 +179,6 @@ onMounted(() => {
               </tr>
             </tbody>
           </table>
-        </div>
-
-        <!-- Total Students Count -->
-        <div class="mt-4 flex justify-end">
-          <p class="text-gray-600 dark:text-gray-300">Total Students: {{ filteredStudents.length }}</p>
         </div>
       </div>
     </div>

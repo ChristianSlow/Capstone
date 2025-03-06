@@ -120,7 +120,7 @@ const confirmDeleteSelected = () => {
               </div>
             </template>
   
-            <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
+            <!-- <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column> -->
             <Column field="name" header="Name" style="min-width: 16rem"></Column>
             <Column field="email" header="Email" style="min-width: 16rem"></Column>
             <Column field="role" header="Role" style="min-width: 10rem"></Column>
@@ -156,11 +156,11 @@ const confirmDeleteSelected = () => {
               <div class="grid grid-cols-12 gap-4">
                 <div class="flex items-center gap-2 col-span-6">
                   <RadioButton id="admin" v-model="product.role" name="role" value="Admin" />
-                  <label for="admin">Admin</label>
+                  <label for="admin">admin</label>
                 </div>
                 <div class="flex items-center gap-2 col-span-6">
                   <RadioButton id="coordinator" v-model="product.role" name="role" value="Ossa Coordinator" />
-                  <label for="coordinator">Ossa Coordinator</label>
+                  <label for="coordinator">student</label>
                 </div>
               </div>
             </div>

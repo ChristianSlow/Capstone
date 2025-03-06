@@ -16,7 +16,7 @@ const info = ref({
     civilstatus: '',
     mobileno: '',
     pofbirth: '',
-    email: '',
+    email: '', // Will be fetched separately
     cellno: '',
     address: '',
     parents: '',
@@ -32,10 +32,14 @@ const isLoading = ref(true);
 const getStudentDetails = async () => {
     isLoading.value = true;
     try {
-        const docRef = doc(db, 'StudentInformation', route.params.id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            info.value = { id: docSnap.id, ...docSnap.data() };
+        const studentRef = doc(db, 'StudentInformation', route.params.id);
+        const studentSnap = await getDoc(studentRef);
+        
+        if (studentSnap.exists()) {
+            info.value = { id: studentSnap.id, ...studentSnap.data() };
+
+            // Fetch email separately from the 'users' collection
+            await getStudentEmail(route.params.id);
         } else {
             console.error('No student found');
         }
@@ -45,13 +49,30 @@ const getStudentDetails = async () => {
     isLoading.value = false;
 };
 
+// Fetch student email from 'users' collection
+const getStudentEmail = async (studentId) => {
+    try {
+        const userRef = doc(db, 'users', studentId);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+            info.value.email = userSnap.data().email || 'No email found';
+        } else {
+            console.error('No user found in users collection');
+        }
+    } catch (error) {
+        console.error('Error fetching student email:', error);
+    }
+};
+
 onMounted(() => {
     getStudentDetails();
 });
 </script>
 
+
 <template>
-  <main class="md:ml-64 h-auto pt-20 bg-gray-100 dark:bg-gray-900 flex justify-center text-gray-900 dark:text-white">
+  <main class="md:ml-64 h-auto pt-10 bg-gray-100 dark:bg-gray-900 flex justify-center text-gray-900 dark:text-white">
     <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl overflow-hidden p-10 max-w-5xl w-full">
       <h1 class="text-center text-4xl font-bold text-gray-800 dark:text-white mb-8">
         Student Profile
@@ -130,15 +151,15 @@ onMounted(() => {
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div class="info-card">
-            <p class="label">Address</p>
-            <p class="value">{{ info.address }}</p>
-          </div>
-          
-          <div class="info-card">
             <p class="label">Parents</p>
             <p class="value">{{ info.parents }}</p>
           </div>
 
+          <div class="info-card">
+            <p class="label">Address</p>
+            <p class="value">{{ info.address }}</p>
+          </div>
+          
           <div class="info-card">
             <p class="label">Contact Number</p>
             <p class="value">{{ info.cellno }}</p>

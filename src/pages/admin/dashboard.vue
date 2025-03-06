@@ -100,11 +100,11 @@ onMounted(fetchData);
 </script>
 
 <template>
-  <main class="md:ml-64 h-auto pt-16 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white text-base md:text-lg">
-      <h1 class="text-4xl font-bold text-center text-gray-800 dark:text-white mb-6">Dashboard</h1>
+  <main class="md:ml-64 h-auto p-1 pt-16 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white text-base md:text-lg">
+      <h1 class="text-4xl font-bold text-center text-gray-800 dark:text-white mb-5">Dashboard</h1>
 
       <!-- Grid Section for Stats -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-7">
           <div class="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 flex items-center space-x-4 border-t-4 border-blue-500 transition-all hover:shadow-lg hover:-translate-y-1">
               <AcademicCapIcon class="h-14 w-14 text-blue-500" />
               <div>
@@ -139,7 +139,7 @@ onMounted(fetchData);
       </div>
 
       <!-- Insights Section -->
-      <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 border-t-4 border-indigo-500">
+      <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-4 border-t-4 border-indigo-500">
           <h2 class="text-3xl font-semibold text-center text-gray-700 dark:text-white mb-6">Detailed Insights</h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">

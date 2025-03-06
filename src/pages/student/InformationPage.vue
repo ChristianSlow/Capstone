@@ -63,7 +63,12 @@ const getData = async () => {
     try {
         const querySnapshot = await getDocs(collection(db, 'Courses'));
         querySnapshot.forEach((doc) => {
-            courses.value.push({ id: doc.id, ...doc.data() });
+            let data = doc.data();
+            // Convert Firestore timestamp to Date
+            if (data.dateofbirth && data.dateofbirth.toDate) {
+                data.dateofbirth = data.dateofbirth.toDate();
+            }
+            courses.value.push({ id: doc.id, ...data });
         });
         console.log('✅ Courses loaded:', courses.value);
     } catch (error) {
@@ -90,8 +95,17 @@ const submit = async () => {
         console.error('❌ User not logged in. Cannot save data.');
         return;
     }
+
+    // Format date before saving (if not null)
+    const formattedDate = info.value.dateofbirth
+        ? info.value.dateofbirth.toISOString().split('T')[0] // Formats to "YYYY-MM-DD"
+        : null;
+
     try {
-        await setDoc(doc(db, 'StudentInformation', userId.value), info.value);
+        await setDoc(doc(db, 'StudentInformation', userId.value), {
+            ...info.value,
+            dateofbirth: formattedDate, // Store as string instead of Date object
+        });
         console.log('✅ Document successfully written!');
         router.push('/confirmationpage');
     } catch (error) {

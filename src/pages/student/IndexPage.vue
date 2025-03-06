@@ -133,17 +133,17 @@ onMounted(() => {
         <div class="text-center mb-6">
           <img class="mx-auto" width="80" height="80" src="/tlogo.png" alt="Tañon College Logo" />
           <h1 class="text-red-800 text-xl font-bold">TAÑON COLLEGE</h1>
-          <h2 class="text-gray-700 text-md">OFFICE OF THE REGISTRAR AND ADMISSIONS</h2>
-          <p class="text-gray-600 text-sm">San Carlos City, Negros Occidental</p>
+          <h2 class="text-gray-900 font-bold text-md">OFFICE OF THE REGISTRAR AND ADMISSIONS</h2>
+          <p class="text-gray-900 text-sm">San Carlos City, Negros Occidental</p>
         </div>
-        <h2 class="text-xl font-bold text-gray-800 text-center mb-1">
+        <h2 class="text-lg text-gray-900 text-center">Name:
           {{ info.fname }} {{ info.mname }} {{ info.lname }}
         </h2>
-        <h2 class="text-lg font-semibold text-gray-700 text-center mb-4">
-          {{ info.year.name }} - {{ info.sem.name }} Semester
+        <h2 class="text-lg text-gray-900 text-center mb-4">Year:
+          {{ info.year.name }} - Semester: {{ info.sem.name }} Semester
         </h2>
-        <h2 class="text-xl font-bold text-gray-800 text-center mb-1">{{ selectedCourse || 'Loading...' }}</h2>
-        <h2 class="text-lg font-semibold text-gray-700 text-center mb-4">{{ selectedMajor || 'Loading...' }}</h2>
+        <h2 class="text-xl font-bold text-gray-900 text-center">{{ selectedCourse || 'Loading...' }}</h2>
+        <h2 class="text-lg font-semibold text-gray-900 text-center mb-3">{{ selectedMajor || 'Loading...' }}</h2>
 
         <p v-if="isLoading" class="text-gray-500 text-center">Loading subjects...</p>
 
