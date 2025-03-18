@@ -121,14 +121,14 @@ onMounted(fetchCourses);
       <div class="grid md:grid-cols-2 gap-6">
         <div>
           <label class="font-medium text-gray-900 dark:text-gray-300">Course</label>
-          <select v-model="selectedCourse" class="w-full mt-1 p-3 border rounded-lg focus:ring-1 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+          <select v-model="selectedCourse" class="w-full mt-1 p-3 border rounded-lg focus:ring-1 focus:ring-black bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
             <option value="" disabled>Select Course</option>
             <option v-for="course in courses" :key="course.id" :value="course.course">{{ course.course }}</option>
           </select>
         </div>
         <div v-if="selectedCourse">
           <label class="font-medium text-gray-900 dark:text-gray-300">Major</label>
-          <select v-model="selectedMajor" class="w-full mt-1 p-3 border rounded-lg focus:ring-1 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
+          <select v-model="selectedMajor" class="w-full mt-1 p-3 border rounded-lg focus:ring-1 focus:ring-black bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
             <option value="" disabled>Select Major</option>
             <option v-for="major in filteredMajors" :key="major" :value="major">{{ major }}</option>
           </select>

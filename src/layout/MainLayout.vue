@@ -91,7 +91,7 @@ const toggleMenu = () => {
               </div>
             </div>
             <div class="mt-3">
-              <Button label="Logout" icon="pi pi-sign-out" class="w-full bg-red-500 hover:bg-red-600 text-white" @click="logout" />
+              <Button label="Logout" icon="pi pi-sign-out" class="w-full bg-red-600 hover:bg-red-600 text-white" @click="logout" />
             </div>
           </OverlayPanel>
         </div>

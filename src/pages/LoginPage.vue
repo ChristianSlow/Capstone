@@ -56,10 +56,12 @@ const signIn = async (e) => {
 
 // Data for the carousel
 const infoSections = ref([
-    { title: "Vision", description: "Our vision is to be a center of excellence in education, empowering students with knowledge, skills, and values." },
-    { title: "Mission", description: "We are committed to providing quality education, fostering innovation, and developing responsible leaders for society." },
-    { title: "Goals", description: "To cultivate a culture of academic excellence, community service, and continuous learning." },
-    { title: "Objectives", description: "Enhance student engagement, promote research, and ensure faculty and curriculum development." }
+    { title: "Philosopy", description: "A private non-sectarian school that promotes the holistic development of the learners in response to the changing society." },
+    { title: "Vision", description: "Provide the poor an access to quality education that would improve their lives and make them realize that poverty is not a hindrance to success." },
+    { title: "Mission", description: "Provides relevant quality Christian education that will equip the learners with 21st-century skills for global competitiveness." },
+    { title: "Goals", description: "The school aims to provide every student with lifelong skills that will make them: 1. Preserve and enrich their cultural heritage, 2. Inculcate moral and Christian values, 3. Attain a strong sense of Patriotism, and 4. Participate in political, social, and economic progress of their respective communities." },
+    { title: "Objectives", description: "The school aims to provide every student with lifelong skills that will make them preserve and enrich their cultural heritage, inculcate moral and Christian values, attain a strong sense of Patriotism, and participate in political, social, and economic progress of their respective communities." },
+    { title: "Core Values", description: "Service, Integrity, Honesty, Pro Nature, Pro Environment, and God-centered." },
 ]);
 </script>
 
