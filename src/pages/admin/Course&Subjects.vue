@@ -7,6 +7,9 @@ import { collection, addDoc, getDocs, doc, deleteDoc } from "firebase/firestore"
 import { db } from '../../firebase';
 import { updateDoc } from "firebase/firestore";
 
+import { useToast } from 'primevue/usetoast';
+const toast = useToast();
+
 const data = ref ({
     course: '',
     majors: [],
@@ -114,6 +117,7 @@ const confirmDeleteProduct = (prod) => {
 const deleteProduct = async () => {
     console.log(product.value)
     await deleteDoc(doc(db, "Courses", product.value.id));
+    toast.add({ severity: 'success', summary: 'Deleted', detail: 'Course deleted successfully', life: 3000 });
     deleteProductDialog.value = false;
     product.value = {};
     getData()
@@ -252,6 +256,16 @@ const getStatusLabel = (status) => {
             <template #footer>
                 <Button label="Cancel" icon="pi pi-times" text class="p-button-md" @click="hideDialog" />
                 <Button label="Save" icon="pi pi-check" severity="success" class="p-button-md" @click="saveProduct" />
+            </template>
+        </Dialog>
+        <Dialog v-model:visible="deleteProductDialog" :style="{ width: '450px' }" header="Confirm" modal>
+            <div class="confirmation-content text-center text-lg">
+                <i class="pi pi-exclamation-triangle mr-3 text-3xl text-red-500" />
+                <span>Are you sure you want to delete <strong>{{ product.course }}</strong>?</span>
+            </div>
+            <template #footer>
+                <Button label="No" icon="pi pi-times" text @click="deleteProductDialog = false" />
+                <Button label="Yes" icon="pi pi-check" severity="danger" @click="deleteProduct" />
             </template>
         </Dialog>
     </main>

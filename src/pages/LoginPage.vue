@@ -30,10 +30,12 @@ const signIn = async (e) => {
         if (docSnap.exists()) {
             const userData = docSnap.data();
             if (userData.role === 'admin') {
+                alert("Login successful!");
                 router.push('/admin');
                 return;
             }
             if (userData.role === 'student') {
+                alert("Login successful!");
                 router.push(userData.isDone ? '/infopage' : '/designatedsub');
                 return;
             }

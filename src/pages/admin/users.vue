@@ -40,6 +40,7 @@ const saveProduct = async () => {
 const deleteProduct = async () => {
     const docRef = doc(db, 'users', product.value.id); // Ensure we're working with the 'users' collection
     await deleteDoc(docRef);
+    alert("Account deleted successfully.");
     deleteProductDialog.value = false;
     product.value = {}; // Clear selected product
     fetchAccounts(); // Refresh data
@@ -168,6 +169,17 @@ const confirmDeleteSelected = () => {
           <template #footer>
             <Button label="Cancel" icon="pi pi-times" text @click="hideDialog" />
             <Button label="Save" icon="pi pi-check" @click="saveProduct" />
+          </template>
+        </Dialog>
+        <!-- Delete Confirmation Dialog -->
+        <Dialog v-model:visible="deleteProductDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
+          <div class="confirmation-content flex items-center gap-4">
+            <i class="pi pi-exclamation-triangle text-red-500 text-3xl" />
+            <span>Are you sure you want to delete <b>{{ product.name }}</b>?</span>
+          </div>
+          <template #footer>
+            <Button label="No" icon="pi pi-times" text @click="deleteProductDialog = false" />
+            <Button label="Yes" icon="pi pi-check" severity="danger" @click="deleteProduct" />
           </template>
         </Dialog>
       </div>

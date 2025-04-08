@@ -6,6 +6,7 @@ import { collection, setDoc, doc } from "firebase/firestore";
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const successMessage = ref('');
 
 const credentials = ref({
     name: '',
@@ -52,7 +53,11 @@ const signUp = async () => {
             role: 'student'
         });
 
-        credentials.value.password = ''; // Clear password from memory
+        credentials.value.password = ''; 
+        successMessage.value = 'Sign up successful! Redirecting...';
+            setTimeout(() => {
+                router.push('/');
+            }, 2000);
         router.push('/');
     } catch (error) {
         console.error("Error during sign-up:", error.message);
