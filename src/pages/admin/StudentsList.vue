@@ -63,18 +63,19 @@
 	const openModal = (type, student) => {
 		modalType.value = type;
 		selectedStudentId.value = student.id;
+		console.log(student);
 		showModal.value = true;
 	};
 
 	const submitModalAction = async () => {
-		payload.to = await getStudentEmail(selectedStudentId);
+		await getStudentEmail(selectedStudentId.value);
 		try {
 			if (modalType.value === 'accept') {
 				await updateDoc(
 					doc(db, 'StudentInformation', selectedStudentId.value),
 					{
 						status: 'Accepted',
-						message: message.value,
+						message: payload.value.message,
 					},
 				);
 
@@ -85,7 +86,7 @@
 						headers: {
 							'Content-Type': 'application/json',
 						},
-						body: JSON.stringify(payload),
+						body: JSON.stringify(payload.value),
 					},
 				).json();
 				console.log(data.value.message);
@@ -95,7 +96,7 @@
 					doc(db, 'StudentInformation', selectedStudentId.value),
 					{
 						status: 'Denied',
-						message: message.value,
+						message: payload.value.message,
 					},
 				);
 				const { data, error } = await useFetch(
@@ -105,7 +106,7 @@
 						headers: {
 							'Content-Type': 'application/json',
 						},
-						body: JSON.stringify(payload),
+						body: JSON.stringify(payload.value),
 					},
 				).json();
 				console.log(data.value.message);
@@ -137,7 +138,7 @@
 			const userSnap = await getDoc(userRef);
 
 			if (userSnap.exists()) {
-				info.value.email = userSnap.data().email || 'No email found';
+				payload.value.to = userSnap.data().email || 'No email found';
 			} else {
 				console.error('No user found in users collection');
 			}
