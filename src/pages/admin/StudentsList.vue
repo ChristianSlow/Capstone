@@ -6,7 +6,11 @@ import { db } from '../../firebase';
 const students = ref([]);
 const isLoading = ref(false);
 const searchQuery = ref('');
-const selectedStatus = ref(''); // Store selected status filter
+const selectedStatus = ref(''); 
+const showModal = ref(false);
+const modalType = ref(''); 
+const selectedStudentId = ref('');
+const message = ref('');
 
 // Fetch the list of students
 const getData = async () => {
@@ -40,24 +44,33 @@ const filteredStudents = computed(() => {
   });
 });
 
-const acceptStudent = async (id) => {
-  try {
-    await updateDoc(doc(db, 'StudentInformation', id), { status: 'Accepted' });
-    alert('Student accepted successfully! Email will be sent.');
-    getData();
-  } catch (error) {
-    console.error('Error accepting student:', error);
-  }
+const openModal = (type, id) => {
+  modalType.value = type;
+  selectedStudentId.value = id;
+  message.value = '';
+  showModal.value = true;
 };
 
-const denyStudent = async (id) => {
+const submitModalAction = async () => {
   try {
-    await updateDoc(doc(db, 'StudentInformation', id), { status: 'Denied' });
-    alert('Student denied successfully!');
+    if (modalType.value === 'accept') {
+      await updateDoc(doc(db, 'StudentInformation', selectedStudentId.value), {
+        status: 'Accepted',
+        message: message.value,
+      });
+      alert('Student accepted! Message will be sent.');
+    } else if (modalType.value === 'deny') {
+      await updateDoc(doc(db, 'StudentInformation', selectedStudentId.value), {
+        status: 'Denied',
+        message: message.value,
+      });
+      alert('Student denied! Message will be sent.');
+    }
+    showModal.value = false;
     getData();
   } catch (error) {
-    console.error('Error denying student:', error);
-    alert('Failed to deny student.');
+    console.error('Error updating student status:', error);
+    alert('Failed to update student.');
   }
 };
 
@@ -150,13 +163,13 @@ onMounted(() => {
                     <template v-if="!student.status || student.status === 'Pending'">
                       <button
                         class="p-2 bg-green-500 text-white rounded-md shadow hover:bg-green-600 focus:outline-none"
-                        @click="acceptStudent(student.id)"
+                        @click="openModal('accept', student.id)"
                       >
                         <i class="pi pi-check mr-1"></i> Accept
                       </button>
                       <button
                         class="p-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600 focus:outline-none"
-                        @click="denyStudent(student.id)"
+                        @click="openModal('deny', student.id)"
                       >
                         <i class="pi pi-times mr-1"></i> Deny
                       </button>
@@ -181,6 +194,40 @@ onMounted(() => {
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+        <!-- Modal -->
+    <div
+      v-if="showModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+    >
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-11/12 max-w-md">
+        <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+          {{ modalType === 'accept' ? 'Accept' : 'Deny' }} Student
+        </h2>
+        <textarea
+          v-model="message"
+          rows="4"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          placeholder="Enter your message here..."
+        ></textarea>
+        <div class="flex justify-end mt-4 gap-2">
+          <button
+            @click="showModal = false"
+            class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+          >
+            Cancel
+          </button>
+          <button
+            @click="submitModalAction"
+            :class="[
+              'px-4 py-2 text-white rounded',
+              modalType === 'accept' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'
+            ]"
+          >
+            {{ modalType === 'accept' ? 'Accept' : 'Deny' }}
+          </button>
         </div>
       </div>
     </div>
