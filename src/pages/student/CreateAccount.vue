@@ -7,6 +7,8 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const successMessage = ref('');
+const isSigningUp = ref(false);
+
 
 const credentials = ref({
     name: '',
@@ -29,39 +31,43 @@ const validatePassword = (password) => {
 };
 
 const signUp = async () => {
-    if (!validateEmail(credentials.value.email)) {
-        emailError.value = "Please enter a valid email address.";
-        return;
-    } else {
-        emailError.value = '';
-    }
+  if (!validateEmail(credentials.value.email)) {
+    emailError.value = "Please enter a valid email address.";
+    return;
+  } else {
+    emailError.value = '';
+  }
 
-    if (!validatePassword(credentials.value.password)) {
-        passwordError.value = "Password must be at least 8 characters long and include an uppercase letter, a number, and a special character.";
-        return;
-    } else {
-        passwordError.value = '';
-    }
+  if (!validatePassword(credentials.value.password)) {
+    passwordError.value = "Password must be at least 8 characters long and include an uppercase letter, a number, and a special character.";
+    return;
+  } else {
+    passwordError.value = '';
+  }
 
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, credentials.value.email, credentials.value.password);
-        const user = userCredential.user;
+  isSigningUp.value = true;
 
-        await setDoc(doc(db, "users", user.uid), {
-            name: credentials.value.name,
-            email: credentials.value.email,
-            role: 'student'
-        });
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, credentials.value.email, credentials.value.password);
+    const user = userCredential.user;
 
-        credentials.value.password = ''; 
-        successMessage.value = 'Sign up successful! Redirecting...';
-            setTimeout(() => {
-                router.push('/');
-            }, 2000);
-        router.push('/');
-    } catch (error) {
-        console.error("Error during sign-up:", error.message);
-    }
+    await setDoc(doc(db, "users", user.uid), {
+      name: credentials.value.name,
+      email: credentials.value.email,
+      role: 'student'
+    });
+
+    credentials.value.password = ''; 
+    successMessage.value = 'Sign up successful! Redirecting...';
+    
+    setTimeout(() => {
+      router.push('/');
+    }, 2000);
+  } catch (error) {
+    console.error("Error during sign-up:", error.message);
+  } finally {
+    isSigningUp.value = false;
+  }
 };
 </script>
 
@@ -110,9 +116,17 @@ const signUp = async () => {
                         <p v-if="passwordError" class="text-red-500 text-sm mt-1">{{ passwordError }}</p>
                     </div>
 
-                    <button type="submit" 
-                        class="w-full bg-red-800 text-white py-3 rounded-lg hover:bg-red-900 transition-transform transform hover:scale-105 shadow-md">
-                        Sign Up
+                    <button 
+                        type="submit"
+                        :disabled="isSigningUp"
+                        class="w-full bg-red-800 text-white py-3 rounded-lg hover:bg-red-900 transition-transform transform hover:scale-105 shadow-md flex justify-center items-center gap-2"
+                        >
+                        <template v-if="isSigningUp">
+                            <i class="pi pi-spin pi-spinner"></i> Signing up...
+                        </template>
+                        <template v-else>
+                            Sign Up
+                        </template>
                     </button>
                 </form>
 

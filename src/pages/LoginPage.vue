@@ -9,6 +9,9 @@ import Carousel from 'primevue/carousel';
 const router = useRouter();
 const showPassword = ref(false);
 const loginError = ref(""); // Error message for wrong credentials
+const isLoggingIn = ref(false);
+const loginSuccess = ref(false);
+
 
 const credentials = ref({
     email: '',
@@ -17,35 +20,33 @@ const credentials = ref({
 
 const signIn = async (e) => {
     e.preventDefault();
-    loginError.value = ""; // Reset error message before login attempt
+    loginError.value = "";
+    isLoggingIn.value = true;
+    loginSuccess.value = false;
 
     try {
         const userCredential = await signInWithEmailAndPassword(auth, credentials.value.email, credentials.value.password);
         const user = userCredential.user;
-        console.log(user);
 
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
             const userData = docSnap.data();
-            if (userData.role === 'admin') {
-                alert("Login successful!");
-                router.push('/admin');
-                return;
-            }
-            if (userData.role === 'student') {
-                alert("Login successful!");
-                router.push(userData.isDone ? '/infopage' : '/designatedsub');
-                return;
-            }
+            loginSuccess.value = true;
+
+            setTimeout(() => {
+                if (userData.role === 'admin') {
+                    router.push('/admin');
+                } else if (userData.role === 'student') {
+                    router.push(userData.isDone ? '/infopage' : '/designatedsub');
+                }
+            }, 1500);
         } else {
             console.log("No such document!");
         }
     } catch (error) {
         console.error("Login error:", error.message);
-
-        // Handle specific authentication errors
         if (error.code === 'auth/wrong-password') {
             loginError.value = "Incorrect password. Please try again.";
         } else if (error.code === 'auth/user-not-found') {
@@ -53,8 +54,11 @@ const signIn = async (e) => {
         } else {
             loginError.value = "Login failed. Please check your credentials.";
         }
+    } finally {
+        isLoggingIn.value = false;
     }
 };
+
 
 // Data for the carousel
 const infoSections = ref([
@@ -152,9 +156,21 @@ const infoSections = ref([
                         </div>
 
                         <button type="submit"
-                            class="w-full bg-red-800 text-white py-3 rounded-lg hover:bg-red-900 transition-transform transform hover:scale-105 shadow-md">
-                            Login
+                            :disabled="isLoggingIn"
+                            class="w-full bg-red-800 text-white py-3 rounded-lg hover:bg-red-900 transition-transform transform hover:scale-105 shadow-md flex justify-center items-center gap-2">
+                            <template v-if="isLoggingIn">
+                                <i class="pi pi-spin pi-spinner"></i> Logging in...
+                            </template>
+                            <template v-else-if="loginSuccess">
+                                <i class="pi pi-check-circle text-green-300"></i> Login successful!
+                            </template>
+                            <template v-else>
+                                Login
+                            </template>
                         </button>
+                        <!-- <p v-if="loginSuccess" class="text-green-600 text-center mt-3 font-medium">
+                            Login successful! Redirecting...
+                        </p> -->
                     </form>
 
                     <!-- Create Account -->

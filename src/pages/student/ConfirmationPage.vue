@@ -23,7 +23,7 @@ const goToSubjects = () => {
         Thank You for Registering!
       </h1>
       <p class="text-gray-600 mb-6">
-        You can now proceed to the treasurer's office. <br />
+        Just wait for a while, we will send you an update through email.. <br />
         You can also view your subjects by clicking the button below.
       </p>
       <div class="flex justify-center gap-4">
