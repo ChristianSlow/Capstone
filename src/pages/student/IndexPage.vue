@@ -136,10 +136,10 @@ onMounted(() => {
           <h2 class="text-gray-900 font-bold text-md">OFFICE OF THE REGISTRAR AND ADMISSIONS</h2>
           <p class="text-gray-900 text-sm">San Carlos City, Negros Occidental</p>
         </div>
-        <h2 class="text-lg text-gray-900 text-center">Name:
+        <h2 class="text-lg font-bold text-black text-center">Name:
           {{ info.fname }} {{ info.mname }} {{ info.lname }}
         </h2>
-        <h2 class="text-lg text-gray-900 text-center mb-4">Year:
+        <h2 class="text-lg font-bold text-black text-center mb-4">Year:
           {{ info.year.name }} - Semester: {{ info.sem.name }} Semester
         </h2>
         <h2 class="text-xl font-bold text-gray-900 text-center">{{ selectedCourse || 'Loading...' }}</h2>
