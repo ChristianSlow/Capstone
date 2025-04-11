@@ -81,7 +81,7 @@ const confirmDeleteSelected = () => {
     <main class="md:ml-64 h-auto pt-14 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
       <div>
         <div class="card bg-white dark:bg-gray-800 shadow-md p-4">
-          <!-- Toolbar -->
+          <!-- Toolbar
           <Toolbar class="mb-4">
             <template #start>
               <Button label="New" icon="pi pi-plus" class="mr-2" @click="openNew" />
@@ -94,7 +94,7 @@ const confirmDeleteSelected = () => {
                 :disabled="!selectedProducts || !selectedProducts.length" 
               />
             </template>
-          </Toolbar>
+          </Toolbar> -->
   
           <!-- Data Table -->
           <DataTable
