@@ -134,9 +134,9 @@ const dropdownItemsss = ref([
 
 const dropdownItemssss = ref([
     { name: 'First Year', code: 'First Year' },
-    { name: 'Second Year', code: 'Second Year' },
-    { name: 'Third Year', code: 'Third Year' },
-    { name: 'Fourth Year', code: 'Fourth Year' },
+    // { name: 'Second Year', code: 'Second Year' },
+    // { name: 'Third Year', code: 'Third Year' },
+    // { name: 'Fourth Year', code: 'Fourth Year' },
 ]);
 
 const filteredMajor = computed(() => {
@@ -263,17 +263,6 @@ body {
 						/>
 					</div>
 					<div class="flex flex-wrap gap-2 w-full">
-						<label for="civilstatus">Semester</label>
-						<Dropdown
-							id="civilstatus"
-							v-model="info.sem"
-							:options="dropdownItemsss"
-							optionLabel="name"
-							placeholder="Select Semester"
-							class="w-full"
-						/>
-					</div>
-					<div class="flex flex-wrap gap-2 w-full">
 						<label for="civilstatus">Year</label>
 						<Dropdown
 							id="civilstatus"
@@ -281,6 +270,17 @@ body {
 							:options="dropdownItemssss"
 							optionLabel="name"
 							placeholder="Select Year"
+							class="w-full"
+						/>
+					</div>
+					<div class="flex flex-wrap gap-2 w-full">
+						<label for="civilstatus">Semester</label>
+						<Dropdown
+							id="civilstatus"
+							v-model="info.sem"
+							:options="dropdownItemsss"
+							optionLabel="name"
+							placeholder="Select Semester"
 							class="w-full"
 						/>
 					</div>

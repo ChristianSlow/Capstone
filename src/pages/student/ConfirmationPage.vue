@@ -24,7 +24,7 @@ const goToSubjects = () => {
       </h1>
       <p class="text-gray-600 mb-6">
         Just wait for a while, we will send you an update through email.. <br />
-        You can also view your subjects by clicking the button below.
+        You can also view your possible subjects by clicking the button below.
       </p>
       <div class="flex justify-center gap-4">
         <button @click="goToSubjects" class="bg-blue-500 text-white px-4 py-2 rounded-lg">
