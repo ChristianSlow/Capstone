@@ -23,7 +23,7 @@ const goToSubjects = () => {
         Thank You for Registering!
       </h1>
       <p class="text-gray-600 mb-6">
-        Just wait for a while, we will send you an update through email.. <br />
+        Just wait for a while, we will send you an update through email. If you cannot see the message in the inbox, it might be in the spam. <br />
         You can also view your possible subjects by clicking the button below.
       </p>
       <div class="flex justify-center gap-4">
