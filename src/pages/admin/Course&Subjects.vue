@@ -214,12 +214,12 @@ const getStatusLabel = (status) => {
                     </template>
                 </Column>
 
-                <!-- Status Column -->
+                <!-- Status Column
                 <Column header="Status" style="min-width: 8rem">
                     <template #body="slotProps">
                         <Tag :value="slotProps.data.inventoryStatus" :severity="getStatusLabel(slotProps.data.inventoryStatus)" class="px-2 py-1 text-base md:text-lg font-medium" />
                     </template>
-                </Column>
+                </Column> -->
 
                 <!-- Actions Column -->
                 <Column :exportable="false" style="min-width: 8rem; text-align: center;">
