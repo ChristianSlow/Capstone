@@ -203,6 +203,7 @@
 								<th class="px-4 py-3">Student Name</th>
 								<th class="px-4 py-3">Course</th>
 								<th class="px-4 py-3">Major</th>
+								<th class="px-4 py-3">GWA</th>
 								<th class="px-4 py-3">Status</th>
 								<th class="px-4 py-3">Action</th>
 							</tr>
@@ -217,6 +218,8 @@
 								</td>
 								<td class="px-4 py-3">{{ student.selectedCourse }}</td>
 								<td class="px-4 py-3">{{ student.major || '-' }}</td>
+								<td class="px-4 py-3">{{ student.gwa || '-' }}</td>
+
 								<td class="px-4 py-3">
 									<span
 										class="px-2 py-1 rounded text-xs font-bold"

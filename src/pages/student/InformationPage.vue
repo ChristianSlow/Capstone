@@ -4,6 +4,7 @@ import { collection, doc, setDoc, getDocs } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '../../firebase';
 import { useRouter } from 'vue-router';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import Calendar from 'primevue/calendar';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
@@ -11,6 +12,12 @@ import Button from 'primevue/button';
 import Textarea from 'primevue/textarea';
 
 const isDarkMode = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+const selectedFile = ref(null);
+
+const onFileChange = (e) => {
+	selectedFile.value = e.target.files[0];
+};
 
 const updateDarkMode = (event) => {
     isDarkMode.value = event.matches;
@@ -44,6 +51,7 @@ const info = ref({
     major: '',
     sem: '',
     year: '',
+	gwa: '',
 });
 
 const router = useRouter();
@@ -91,26 +99,43 @@ onMounted(() => {
 });
 
 const submit = async () => {
-    if (!userId.value) {
-        console.error('❌ User not logged in. Cannot save data.');
-        return;
-    }
+	if (!userId.value) {
+		console.error('❌ User not logged in. Cannot save data.');
+		return;
+	}
 
-    // Format date before saving (if not null)
-    const formattedDate = info.value.dateofbirth
-        ? info.value.dateofbirth.toISOString().split('T')[0] // Formats to "YYYY-MM-DD"
-        : null;
+	// Format date before saving (if not null)
+	const formattedDate = info.value.dateofbirth
+		? info.value.dateofbirth.toISOString().split('T')[0]
+		: null;
 
-    try {
-        await setDoc(doc(db, 'StudentInformation', userId.value), {
-            ...info.value,
-            dateofbirth: formattedDate, // Store as string instead of Date object
-        });
-        console.log('✅ Document successfully written!');
-        router.push('/confirmationpage');
-    } catch (error) {
-        console.error('❌ Error adding document: ', error);
-    }
+	let imageUrl = '';
+
+	// Upload image if file is selected
+	if (selectedFile.value) {
+		try {
+			const storage = getStorage();
+			const filePath = `student_photos/${userId.value}/${selectedFile.value.name}`;
+			const imgRef = storageRef(storage, filePath);
+			await uploadBytes(imgRef, selectedFile.value);
+			imageUrl = await getDownloadURL(imgRef);
+			console.log('✅ Image uploaded:', imageUrl);
+		} catch (err) {
+			console.error('❌ Failed to upload image:', err);
+		}
+	}
+
+	try {
+		await setDoc(doc(db, 'StudentInformation', userId.value), {
+			...info.value,
+			dateofbirth: formattedDate,
+			imageUrl: imageUrl, // Save image URL in Firestore
+		});
+		console.log('✅ Document successfully written!');
+		router.push('/confirmationpage');
+	} catch (error) {
+		console.error('❌ Error adding document: ', error);
+	}
 };
 
 const dropdownItems = ref([
@@ -212,6 +237,23 @@ body {
 					<div class="flex flex-wrap gap-2 w-full">
 						<label for="lastname">Last Name</label>
 						<InputText v-model="info.lname" id="lastname" type="text" class="p-2 border rounded w-full" :class="{'bg-gray-100 text-gray-900': !isDarkMode, 'bg-gray-700 text-white border-gray-600': isDarkMode}" />
+					</div>
+				</div>
+
+				<div class="flex flex-col md:flex-row gap-4">
+					<div class="flex flex-wrap gap-2 w-full">
+						<label for="gwa">General Average</label>
+						<InputText v-model="info.gwa" id="gwa" type="text" class="p-2 border rounded w-full" :class="{'bg-gray-100 text-gray-900': !isDarkMode, 'bg-gray-700 text-white border-gray-600': isDarkMode}" />
+					</div>
+					<div class="flex flex-wrap gap-2 w-full">
+						<label for="photo">Upload Photo</label>
+						<input 
+							id="photo" 
+							type="file" 
+							@change="onFileChange" 
+							accept="image/*" 
+							class="w-full border rounded p-2 bg-white text-black dark:bg-gray-700 dark:text-white dark:border-gray-600" 
+						/>
 					</div>
 				</div>
 

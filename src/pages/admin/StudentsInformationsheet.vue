@@ -24,6 +24,7 @@ const info = ref({
     major: '',
     sem: '',
     year: '',
+    gwa: '',
 });
 
 const isLoading = ref(true);
@@ -120,7 +121,12 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">  
+          <div class="info-card">
+            <p class="label">General Average</p>
+            <p class="value">{{ info.gwa }}</p>
+          </div>
+
           <div class="info-card">
             <p class="label">Mobile No.</p>
             <p class="value">{{ info.mobileno }}</p>
